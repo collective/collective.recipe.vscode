@@ -36,7 +36,7 @@ def find_executable_path(name):
     """ """
     try:
         path_ = subprocess.check_output(["which", name])
-        return ensure_unicode(path_)
+        return ensure_unicode(path_.strip())
 
     except subprocess.CalledProcessError:
         pass
@@ -124,7 +124,7 @@ class Recipe:
             list(eggs_locations), list(develop_eggs_locations), existing_settings
         )
 
-        self._write_project_file(vscode_settings, options["overwrite"])
+        self._write_project_file(vscode_settings, existing_settings)
 
     update = install
 
@@ -269,14 +269,13 @@ class Recipe:
     ):
         """ """
         options = self.normalize_options()
-        settings = dict(settings={})
-
+        settings = dict()
         # Base settings
         settings[mappings["python-path"]] = self._resolve_executable_path(
             options["python-path"]
         )
 
-        settings[mappings["autocomplete-extrapaths"]] = options["omelette-location"]
+        settings[mappings["autocomplete-extrapaths"]] = eggs_locations
 
         if options["autocomplete-use-omelete"]:
             # Add the omelette and the development eggs to the jedi list.
@@ -284,7 +283,9 @@ class Recipe:
             # keeping open files inside the project. Making it possible to
             # navigate to the location in the project, syncing the toolbar, and
             # inspecting the full module not just the individual file.
-            settings[mappings["autocomplete-extrapaths"]] += develop_eggs_locations
+            settings[mappings["autocomplete-extrapaths"]] = [
+                options["omelette-location"]
+            ] + develop_eggs_locations
 
         # Look on Jedi
         if "jedi-enabled" in options:
@@ -335,7 +336,7 @@ class Recipe:
                 if not allow_key_error:
                     raise
 
-        if not options.get(mappings[linter_enabled]):
+        if not allow_key_error and not options.get(linter_enabled):
             return
         # we care only if flake8 is active
         linter_executable = options.get(linter_path, None)
@@ -355,7 +356,7 @@ class Recipe:
     def _write_project_file(self, settings, existing_settings):
         """Project File Writer:
         This method is actual doing writting project file to file system."""
-        with open(os.path.join(self.settings_dir, 'settings.json', 'w')) as fp:
+        with open(os.path.join(self.settings_dir, "settings.json"), "w") as fp:
             try:
                 final_settings = existing_settings.copy()
                 final_settings.update(settings)
@@ -393,10 +394,4 @@ def uninstall(name, options):
 
     logger = logging.getLogger(name)
     logger.info("uninstalling ...")
-
-    if options.get("overwrite", "False").lower() in ("yes", "true", "on", "1", "sure"):
-        project_file = os.path.join(
-            options["location"], options["project-name"] + ".sublime-project"
-        )
-        logger.info("removed generated file /{0}".format(project_file.split("/")[-1]))
-        os.unlink(project_file)
+    # xxx: nothing for now, but may be removed what ever in options?
