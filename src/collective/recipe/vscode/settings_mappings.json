@@ -1,0 +1,23 @@
+{
+    "python-path": "python.pythonPath",
+    "autocomplete-extrapaths": "python.autoComplete.extraPaths",
+    "flake8-args": "python.linting.flake8Args",
+    "flake8-enabled": "python.linting.flake8Enabled",
+    "flake8-path": "python.linting.flake8Path",
+    "mypy-enabled": "python.linting.mypyEnabled",
+    "mypy-path": "python.linting.mypyPath",
+    "mypy-args": "python.linting.mypyArgs",
+    "pep8-enabled": "python.linting.pep8Enabled",
+    "pep8-path": "python.linting.pep8Path",
+    "pep8-args": "python.linting.pep8Args",
+    "pylint-args" :"python.linting.pylintArgs",
+    "pylint-enabled": "python.linting.pylintEnabled",
+    "pylint-path": "python.linting.pylintPath",
+    "isort-path": "python.sortImports.path",
+    "isort-args": "python.sortImports.args",
+    "formatting-provider": "python.formatting.provider",
+    "black-path": "python.formatting.blackPath",
+    "black-args": "python.formatting.blackArgs",
+    "jedi-enabled": "python.jediEnabled",
+    "jedi-path": "python.jediPath"
+}

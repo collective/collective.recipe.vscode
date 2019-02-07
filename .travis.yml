@@ -1,0 +1,39 @@
+language: python
+sudo: false
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+
+matrix:
+    include:
+        - python: "3.7"
+          dist: xenial
+          sudo: true
+cache:
+  directories:
+    - $HOME/buildout-cache
+    - $HOME/parts/node
+env:
+  matrix:
+    - CONF=travis.cfg
+matrix:
+  allow_failures:
+    - python: 3.4
+
+install:
+  - pip install -U pip
+  - pip install -r requirements.txt
+  - python bootstrap-buildout.py
+  - bin/buildout -c $CONF annotate
+  - bin/buildout -N -t 3 -c $CONF
+script:
+  - bin/code-analysis
+  - bin/test
+after_success:
+  - travis_wait 30 bin/createcoverage run bin/test
+  - travis_wait 30 pip install coverage==4.4.1 coveralls==1.2.0
+  - travis_wait 30 coveralls
+after_failure:
+  - bin/flake8 --version
