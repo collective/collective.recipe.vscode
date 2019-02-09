@@ -63,6 +63,10 @@ class Recipe:
 
         self._set_defaults()
 
+        self.settings_dir = os.path.join(options["project-root"], ".vscode")
+        if not os.path.exists(self.settings_dir):
+            os.makedirs(self.settings_dir)
+
         develop_eggs = []
 
         if self.options["ignore-develop"].lower() in ("yes", "true", "on", "1", "sure"):
@@ -83,13 +87,6 @@ class Recipe:
         will generate or/update vscode setting file (.vscode/settings.json) based
         on provided options.
         """
-        options = self.normalize_options()
-
-        location = os.path.join(options["project-root"], ".vscode")
-        if not os.path.exists(location):
-            os.mkdir(location)
-
-        self.settings_dir = location
         eggs_locations = set()
         develop_eggs_locations = set()
         develop_eggs = os.listdir(self.buildout["buildout"]["develop-eggs-directory"])
@@ -113,10 +110,11 @@ class Recipe:
             raise UserError(str(exc))
 
         try:
-            fp = open(os.path.join(self.settings_dir, "settings.json"))
-            existing_settings = json.load(fp)
-            fp.close()
+            with open(os.path.join(self.settings_dir, "settings.json")) as fp:
+                existing_settings = json.load(fp)
 
+        except ValueError as e:
+            raise UserError(str(e))
         except IOError:
             existing_settings = dict()
 
@@ -335,6 +333,8 @@ class Recipe:
             except KeyError:
                 if not allow_key_error:
                     raise
+        else:
+            return
 
         if not allow_key_error and not options.get(linter_enabled):
             return
@@ -343,12 +343,10 @@ class Recipe:
         if linter_executable is None:
             linter_executable = find_executable_path(name)
 
-        if linter_executable is None:
-            raise UserError("No executable has been found for {name}".format(name=name))
-
-        settings[mappings[linter_path]] = self._resolve_executable_path(
-            linter_executable
-        )
+        if linter_executable:
+            settings[mappings[linter_path]] = self._resolve_executable_path(
+                linter_executable
+            )
 
         if linter_args in options:
             settings[mappings[linter_args]] = options[linter_args]
