@@ -2,11 +2,11 @@
 """ """
 from zc.buildout import UserError
 
-import subprocess
 import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import zc.recipe.egg
 
@@ -27,8 +27,8 @@ def ensure_unicode(string):
     if isinstance(string, bytes):
         return string.decode("utf-8", "strict")
 
-    if PY2 and isinstance(string, basestring):
-        if not isinstance(string, unicode):
+    if PY2 and isinstance(string, basestring):  # noqa: F821
+        if not isinstance(string, unicode):  # noqa: F821
             return string.decode("utf-8", "strict")
 
 
