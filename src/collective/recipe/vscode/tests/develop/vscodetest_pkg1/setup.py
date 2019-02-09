@@ -14,7 +14,8 @@ test_requirements = []
 setup(
     name="vscodetest_pkg1",
     version="0.1.0",
-    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    description="Python Boilerplate contains all the boilerplate you need"
+    "to create a Python package.",
     long_description=readme,
     author="Md Nazrul Islam",
     author_email="email2nazrul@gmail.com",

@@ -132,63 +132,28 @@ class Recipe:
 
         # Check for required and optional options
         options = self.options.copy()
+        # flake8 check
+        self._normalize_boolean("flake8-enabled", options)
 
-        if "flake8-enabled" in options:
-            options["flake8-enabled"] = options["flake8-enabled"].lower() in (
-                "yes",
-                "true",
-                "on",
-                "1",
-                "sure",
-            )
+        # pylint check
+        self._normalize_boolean("pylint-enabled", options)
 
-        if "pylint-enabled" in options:
-            options["pylint-enabled"] = options["jedi-enabled"].lower() in (
-                "yes",
-                "true",
-                "on",
-                "1",
-                "sure",
-            )
+        # jedi check
+        self._normalize_boolean("jedi-enabled", options)
 
-        if "jedi-enabled" in options:
-            options["jedi-enabled"] = options["jedi-enabled"].lower() in (
-                "yes",
-                "true",
-                "on",
-                "1",
-                "sure",
-            )
+        # black check
+        self._normalize_boolean("black-enabled", options)
 
-        if "black-enabled" in options:
-            options["black-enabled"] = options["black-enabled"].lower() in (
-                "yes",
-                "true",
-                "on",
-                "1",
-                "sure",
-            )
+        # isort check
+        self._normalize_boolean("isort-enabled", options)
 
-        if "isort-enabled" in options:
-            options["isort-enabled"] = options["isort-enabled"].lower() in (
-                "yes",
-                "true",
-                "on",
-                "1",
-                "sure",
-            )
-        if "mypy-enabled" in options:
-            options["mypy-enabled"] = options["mypy-enabled"].lower() in (
-                "yes",
-                "true",
-                "on",
-                "1",
-                "sure",
-            )
+        # mypy check
+        self._normalize_boolean("mypy-enabled", options)
 
+        # autocomplete
         options["autocomplete-use-omelete"] = self.options[
             "autocomplete-use-omelete"
-        ].lower() in ("yes", "true", "on", "1", "sure")
+        ].lower() in ("yes", "y", "true", "t", "on", "1", "sure")
 
         # Parse linter arguments
         if "pylint-args" in options:
@@ -240,6 +205,19 @@ class Recipe:
                 args.append(arg)
 
         return args
+
+    def _normalize_boolean(self, option_name, options):
+        """ """
+        if option_name in options:
+            options[option_name] = options[option_name].lower() in (
+                "y",
+                "yes",
+                "true",
+                "t",
+                "on",
+                "1",
+                "sure",
+            )
 
     def _set_defaults(self):
         """This is setting default values of all possible options"""
@@ -387,7 +365,8 @@ class Recipe:
 
 
 def uninstall(name, options):
-    """Nothing much need to do with uninstall, because this recipe is doing so much filesystem writting.
+    """Nothing much need to do with uninstall, because this recipe is doing so
+    much filesystem writting.
     Depends overwrite option, generated project file is removed."""
 
     logger = logging.getLogger(name)

@@ -8,7 +8,6 @@ from zc.buildout.testing import write
 
 import json
 import os
-import sys
 import tempfile
 import unittest
 
@@ -265,7 +264,8 @@ class TestRecipe(unittest.TestCase):
             read(os.path.join(self.location, '.vscode', 'settings.json'))
         )
 
-        # Make sure other value kept intact, because that option is not handled by this recipe
+        # Make sure other value kept intact, because that option is not handled by 
+        # this recipe.
         self.assertEqual(
             generated_settings[mappings['flake8-path']],
             '/fake/path/flake8',
