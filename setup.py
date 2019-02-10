@@ -30,7 +30,7 @@ entry_points = {
 
 setup(
     name="collective.recipe.vscode",
-    version="0.1.0",
+    version="0.1.1.dev0",
     description="Visual Studio Code configuration for buildout-based Python projects",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
