@@ -17,11 +17,6 @@ JSON_TEMPLATE = os.path.join(
 )
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 
-try:
-    str_ = basestring
-except NameError:
-    str_ = str
-
 
 class TestRecipe(unittest.TestCase):
     """ """

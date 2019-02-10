@@ -25,8 +25,8 @@ matrix:
 install:
   - pip install -U pip
   - pip install -r requirements.txt
-  - bin/buildout -c $CONF annotate
-  - bin/buildout -N -t 3 -c $CONF
+  - buildout -c $CONF annotate
+  - buildout -N -t 3 -c $CONF
 script:
   - bin/code-analysis
   - bin/test
