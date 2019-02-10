@@ -1,5 +1,5 @@
-graft src/plone
+graft src/collective
 graft docs
 include *.rst
 global-exclude *.pyc
-exclude bootstrap-buildout.py .coveragerc buildout.cfg travis.cfg requirements.txt
+exclude .coveragerc buildout.cfg travis.cfg requirements.txt
