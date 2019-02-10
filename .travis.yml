@@ -8,7 +8,7 @@ python:
 
 matrix:
     include:
-        - python: "3.7"
+        - python: 3.7
           dist: xenial
           sudo: true
 cache:
@@ -25,7 +25,6 @@ matrix:
 install:
   - pip install -U pip
   - pip install -r requirements.txt
-  - python bootstrap-buildout.py
   - bin/buildout -c $CONF annotate
   - bin/buildout -N -t 3 -c $CONF
 script:

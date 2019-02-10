@@ -26,7 +26,7 @@ def setUp(test):
 
     # Install the recipe (and dependencies) in develop mode
     zc.buildout.testing.install_develop("zc.recipe.egg", test)
-    zc.buildout.testing.install_develop("plone.recipe.sublimetext", test)
+    zc.buildout.testing.install_develop("collective.recipe.vscode", test)
 
 
 def tearDown(test):
@@ -38,7 +38,7 @@ def test_suite():
     suite = unittest.TestSuite(
         (
             doctest.DocFileSuite(
-                "recipe.rst",
+                "../recipes.rst",
                 globs=globals(),
                 setUp=setUp,
                 tearDown=tearDown,

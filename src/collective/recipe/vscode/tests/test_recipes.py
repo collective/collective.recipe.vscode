@@ -57,7 +57,7 @@ class TestRecipe(unittest.TestCase):
                 "flake8-enabled": "True",
                 "flake8-args": "--max-line-length 88",
                 "flake8-path": "${buildout:directory}/bin/flake8",
-                "isort-enabled": "True"
+                "isort-enabled": "True",
             }
         )
         buildout["vscode"] = recipe_options
@@ -170,14 +170,12 @@ class TestRecipe(unittest.TestCase):
         develop_eggs_locations = []
 
         vsc_settings = recipe._prepare_settings(
-            test_eggs_locations,
-            develop_eggs_locations,
-            {}
+            test_eggs_locations, develop_eggs_locations, {}
         )
-        self.assertNotIn(mappings['isort-path'], vsc_settings)
-        self.assertNotIn(mappings['black-path'], vsc_settings)
-        self.assertNotIn(mappings['flake8-path'], vsc_settings)
-        self.assertNotIn(mappings['pylint-path'], vsc_settings)
+        self.assertNotIn(mappings["isort-path"], vsc_settings)
+        self.assertNotIn(mappings["black-path"], vsc_settings)
+        self.assertNotIn(mappings["flake8-path"], vsc_settings)
+        self.assertNotIn(mappings["pylint-path"], vsc_settings)
 
         recipe_options["jedi-enabled"] = "True"
         recipe_options["pylint-enabled"] = "True"
@@ -191,42 +189,37 @@ class TestRecipe(unittest.TestCase):
 
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         vsc_settings = recipe._prepare_settings(
-            test_eggs_locations, develop_eggs_locations,
-            {}
+            test_eggs_locations, develop_eggs_locations, {}
         )
 
         # Test Anaconda Settings are avialable
-        self.assertIn(mappings['flake8-path'], vsc_settings)
+        self.assertIn(mappings["flake8-path"], vsc_settings)
         # make sure formatter provider is black
-        self.assertEqual(vsc_settings[mappings['formatting-provider']], 'black')
-        self.assertEqual(vsc_settings[mappings['black-path']], '/tmp/bin/black')
-        self.assertEqual(vsc_settings[mappings['black-args']], ['--line-length', '88'])
+        self.assertEqual(vsc_settings[mappings["formatting-provider"]], "black")
+        self.assertEqual(vsc_settings[mappings["black-path"]], "/tmp/bin/black")
+        self.assertEqual(vsc_settings[mappings["black-args"]], ["--line-length", "88"])
 
         # Let's test path, args are ignored
-        buildout["vscode"]["black-enabled"] = 'False'
+        buildout["vscode"]["black-enabled"] = "False"
 
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         vsc_settings2 = recipe._prepare_settings(
-            test_eggs_locations,
-            develop_eggs_locations,
-            {}
+            test_eggs_locations, develop_eggs_locations, {}
         )
-        self.assertNotIn(mappings['formatting-provider'], vsc_settings2)
-        self.assertNotIn(mappings['black-path'], vsc_settings2)
-        self.assertNotIn(mappings['black-args'], vsc_settings2)
+        self.assertNotIn(mappings["formatting-provider"], vsc_settings2)
+        self.assertNotIn(mappings["black-path"], vsc_settings2)
+        self.assertNotIn(mappings["black-args"], vsc_settings2)
 
         # test with existing settings
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         vsc_settings3 = recipe._prepare_settings(
-            test_eggs_locations,
-            develop_eggs_locations,
-            vsc_settings
+            test_eggs_locations, develop_eggs_locations, vsc_settings
         )
 
         # only formatting-provider should removed, others should be kept
-        self.assertNotIn(mappings['formatting-provider'], vsc_settings)
-        self.assertIn(mappings['black-path'], vsc_settings)
-        self.assertNotIn(mappings['black-path'], vsc_settings3)
+        self.assertNotIn(mappings["formatting-provider"], vsc_settings)
+        self.assertIn(mappings["black-path"], vsc_settings)
+        self.assertNotIn(mappings["black-path"], vsc_settings3)
 
     def test__write_project_file(self):
         """ """
@@ -254,59 +247,46 @@ class TestRecipe(unittest.TestCase):
         recipe._set_defaults()
 
         vsc_settings = recipe._prepare_settings(
-            test_eggs_locations, develop_eggs_locations,
-            {}
+            test_eggs_locations, develop_eggs_locations, {}
         )
         recipe._write_project_file(vsc_settings, {})
         # By default no overwrite configuration, means existing configuration should be
         # available
         generated_settings = json.loads(
-            read(os.path.join(self.location, '.vscode', 'settings.json'))
+            read(os.path.join(self.location, ".vscode", "settings.json"))
         )
 
-        # Make sure other value kept intact, because that option is not handled by 
+        # Make sure other value kept intact, because that option is not handled by
         # this recipe.
         self.assertEqual(
-            generated_settings[mappings['flake8-path']],
-            '/fake/path/flake8',
+            generated_settings[mappings["flake8-path"]], "/fake/path/flake8"
         )
         # Test:: default folders option is added, because existing file don't have this
         self.assertEqual(
-            generated_settings[mappings['black-args']],
-            ['--line-length', '88'])
+            generated_settings[mappings["black-args"]], ["--line-length", "88"]
+        )
 
         buildout["vscode"].update(
-            {
-                "black-enabled": "False",
-                "flake8-path": '/new/path/flake8'
-            }
+            {"black-enabled": "False", "flake8-path": "/new/path/flake8"}
         )
 
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         vsc_settings2 = recipe._prepare_settings(
-            test_eggs_locations, develop_eggs_locations,
-            vsc_settings
+            test_eggs_locations, develop_eggs_locations, vsc_settings
         )
 
         recipe._write_project_file(vsc_settings2, vsc_settings)
 
         generated_settings = json.loads(
-            read(os.path.join(self.location, '.vscode', 'settings.json'))
+            read(os.path.join(self.location, ".vscode", "settings.json"))
         )
         # there should not any formatting provider
-        self.assertNotIn(
-            mappings['formatting-provider'],
-            generated_settings
-        )
+        self.assertNotIn(mappings["formatting-provider"], generated_settings)
         # Black path still exists
-        self.assertIn(
-            mappings['black-path'],
-            generated_settings
-        )
+        self.assertIn(mappings["black-path"], generated_settings)
         # Test: overwrite works!
         self.assertEqual(
-            generated_settings[mappings['flake8-path']],
-            '/new/path/flake8'
+            generated_settings[mappings["flake8-path"]], "/new/path/flake8"
         )
 
     def tearDown(self):

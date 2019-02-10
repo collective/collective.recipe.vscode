@@ -124,6 +124,8 @@ class Recipe:
 
         self._write_project_file(vscode_settings, existing_settings)
 
+        return os.path.join(self.settings_dir, 'settings.json')
+
     update = install
 
     def normalize_options(self):
@@ -157,39 +159,19 @@ class Recipe:
 
         # Parse linter arguments
         if "pylint-args" in options:
-            args = self._normalize_linter_args(options["pylint-args"])
-            if args:
-                options["pylint-args"] = args
-            else:
-                del options["pylint-args"]
+            options["pylint-args"] = self._normalize_linter_args(options["pylint-args"])
 
         if "flake8-args" in options:
-            args = self._normalize_linter_args(options["flake8-args"])
-            if args:
-                options["flake8-args"] = args
-            else:
-                del options["flake8-args"]
+            options["flake8-args"] = self._normalize_linter_args(options["flake8-args"])
 
         if "black-args" in options:
-            args = self._normalize_linter_args(options["black-args"])
-            if args:
-                options["black-args"] = args
-            else:
-                del options["black-args"]
+            options["black-args"] = self._normalize_linter_args(options["black-args"])
 
         if "isort-args" in options:
-            args = self._normalize_linter_args(options["isort-args"])
-            if args:
-                options["isort-args"] = args
-            else:
-                del options["isort-args"]
+            options["isort-args"] = self._normalize_linter_args(options["isort-args"])
 
         if "mypy-args" in options:
-            args = self._normalize_linter_args(options["mypy-args"])
-            if args:
-                options["mypy-args"] = args
-            else:
-                del options["mypy-args"]
+            options["mypy-args"] = self._normalize_linter_args(options["mypy-args"])
 
         return options
 
@@ -235,6 +217,28 @@ class Recipe:
             "omelette-location",
             os.path.join(self.buildout["buildout"]["parts-directory"], "omelette"),
         )
+
+        self.options.setdefault("flake8-enabled", "False")
+        self.options.setdefault("flake8-path", "")
+        self.options.setdefault("flake8-args", "")
+        self.options.setdefault("pylint-enabled", "False")
+        self.options.setdefault("pylint-path", "")
+        self.options.setdefault("pylint-args", "")
+        self.options.setdefault("isort-enabled", "False")
+        self.options.setdefault("isort-path", "")
+        self.options.setdefault("isort-args", "")
+        self.options.setdefault("mypy-enabled", "False")
+        self.options.setdefault("mypy-path", "")
+        self.options.setdefault("mypy-args", "")
+        self.options.setdefault("pep8-enabled", "False")
+        self.options.setdefault("pep8-path", "")
+        self.options.setdefault("pep8-args", "")
+        self.options.setdefault("jedi-enabled", "False")
+        self.options.setdefault("jedi-path", "")
+        self.options.setdefault("black-enabled", "False")
+        self.options.setdefault("black-path", "")
+        self.options.setdefault("black-args", "")
+        self.options.setdefault("formatting-provider", "")
         self.options.setdefault("autocomplete-use-omelete", "False")
         self.options.setdefault("ignore-develop", "False")
         self.options.setdefault("ignores", "")
@@ -264,10 +268,10 @@ class Recipe:
             ] + develop_eggs_locations
 
         # Look on Jedi
-        if "jedi-enabled" in options:
+        if options["jedi-enabled"]:
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
 
-        if "jedi-path" in options:
+        if options["jedi-path"]:
             settings[mappings["jedi-path"]] = self._resolve_executable_path(
                 options["jedi-path"]
             )
@@ -285,7 +289,7 @@ class Recipe:
         self._prepare_linter_settings(settings, "isort", options, allow_key_error=True)
 
         # Setup black
-        if "black-enabled" in options and options["black-enabled"]:
+        if options["black-enabled"]:
             settings[mappings["formatting-provider"]] = "black"
             self._prepare_linter_settings(
                 settings, "black", options, allow_key_error=True
@@ -305,20 +309,18 @@ class Recipe:
         linter_path = "{name}-path".format(name=name)
         linter_args = "{name}-args".format(name=name)
 
-        if linter_enabled in options:
-            try:
-                settings[mappings[linter_enabled]] = options[linter_enabled]
-            except KeyError:
-                if not allow_key_error:
-                    raise
-        else:
+        if not options[linter_enabled]:
             return
 
-        if not allow_key_error and not options.get(linter_enabled):
-            return
-        # we care only if flake8 is active
-        linter_executable = options.get(linter_path, None)
-        if linter_executable is None:
+        try:
+            settings[mappings[linter_enabled]] = options[linter_enabled]
+        except KeyError:
+            if not allow_key_error:
+                raise
+
+        # we care only if linter is active
+        linter_executable = options.get(linter_path, "")
+        if linter_executable in (None, ""):
             linter_executable = find_executable_path(name)
 
         if linter_executable:
@@ -326,7 +328,7 @@ class Recipe:
                 linter_executable
             )
 
-        if linter_args in options:
+        if options[linter_args]:
             settings[mappings[linter_args]] = options[linter_args]
 
     def _write_project_file(self, settings, existing_settings):

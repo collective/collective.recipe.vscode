@@ -1,20 +1,20 @@
-===================
-sublimtexttest_pkg1
-===================
+===============
+vscodetest_pkg1
+===============
 
 
-.. image:: https://img.shields.io/pypi/v/sublimtexttest_pkg1.svg
-        :target: https://pypi.python.org/pypi/sublimtexttest_pkg1
+.. image:: https://img.shields.io/pypi/v/vscodetest_pkg1.svg
+        :target: https://pypi.python.org/pypi/vscodetest_pkg1
 
-.. image:: https://img.shields.io/travis/nazrulworld/sublimtexttest_pkg1.svg
-        :target: https://travis-ci.org/nazrulworld/sublimtexttest_pkg1
+.. image:: https://img.shields.io/travis/nazrulworld/vscodetest_pkg1.svg
+        :target: https://travis-ci.org/nazrulworld/vscodetest_pkg1
 
 .. image:: https://readthedocs.org/projects/sublimtexttest-pkg1/badge/?version=latest
         :target: https://sublimtexttest-pkg1.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/nazrulworld/sublimtexttest_pkg1/shield.svg
-     :target: https://pyup.io/repos/github/nazrulworld/sublimtexttest_pkg1/
+.. image:: https://pyup.io/repos/github/nazrulworld/vscodetest_pkg1/shield.svg
+     :target: https://pyup.io/repos/github/nazrulworld/vscodetest_pkg1/
      :alt: Updates
 
 
