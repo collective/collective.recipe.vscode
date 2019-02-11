@@ -2,6 +2,7 @@
 """ """
 from zc.buildout import UserError
 
+import io
 import json
 import logging
 import os
@@ -16,10 +17,6 @@ PY2 = sys.version_info[0] == 2
 json_comment = re.compile(r"/\*.*?\*/", re.DOTALL | re.MULTILINE)
 json_dump_params = {"sort_keys": True, "indent": 4, "separators": (",", ":")}
 json_load_params = {}
-
-if PY2:
-    json_dump_params["encoding"] = "utf-8"
-    json_load_params["encoding"] = "utf-8"
 
 
 def ensure_unicode(string):
@@ -42,11 +39,12 @@ def find_executable_path(name):
         pass
 
 
-with open(
+with io.open(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "settings_mappings.json"),
     "r",
+    encoding="utf-8",
 ) as f:
-    mappings = json.load(f, **json_load_params)
+    mappings = json.loads(f.read())
 
 
 class Recipe:
@@ -110,8 +108,11 @@ class Recipe:
             raise UserError(str(exc))
 
         try:
-            with open(os.path.join(self.settings_dir, "settings.json")) as fp:
-                existing_settings = json.load(fp)
+            with io.open(
+                os.path.join(self.settings_dir, "settings.json"), "r", encoding="utf-8"
+            ) as fp:
+                json_text = fp.read()
+                existing_settings = json.loads(json_text)
 
         except ValueError as e:
             raise UserError(str(e))
@@ -124,7 +125,7 @@ class Recipe:
 
         self._write_project_file(vscode_settings, existing_settings)
 
-        return os.path.join(self.settings_dir, 'settings.json')
+        return os.path.join(self.settings_dir, "settings.json")
 
     update = install
 
@@ -152,6 +153,9 @@ class Recipe:
         # mypy check
         self._normalize_boolean("mypy-enabled", options)
 
+        # pep8 check: Issue#1
+        self._normalize_boolean("pep8-enabled", options)
+
         # autocomplete
         options["autocomplete-use-omelete"] = self.options[
             "autocomplete-use-omelete"
@@ -172,6 +176,9 @@ class Recipe:
 
         if "mypy-args" in options:
             options["mypy-args"] = self._normalize_linter_args(options["mypy-args"])
+
+        if "pep8-args" in options:
+            options["pep8-args"] = self._normalize_linter_args(options["pep8-args"])
 
         return options
 
@@ -334,11 +341,14 @@ class Recipe:
     def _write_project_file(self, settings, existing_settings):
         """Project File Writer:
         This method is actual doing writting project file to file system."""
-        with open(os.path.join(self.settings_dir, "settings.json"), "w") as fp:
+        with io.open(
+            os.path.join(self.settings_dir, "settings.json"), "w", encoding="utf-8"
+        ) as fp:
             try:
                 final_settings = existing_settings.copy()
                 final_settings.update(settings)
-                json.dump(final_settings, fp)
+                json_text = json.dumps(final_settings, indent=4)
+                fp.write(json_text)
 
             except ValueError as exc:
                 # catching any json error
