@@ -348,7 +348,7 @@ class Recipe:
                 final_settings = existing_settings.copy()
                 final_settings.update(settings)
                 json_text = json.dumps(final_settings, indent=4)
-                fp.write(json_text)
+                fp.write(ensure_unicode(json_text))
 
             except ValueError as exc:
                 # catching any json error
