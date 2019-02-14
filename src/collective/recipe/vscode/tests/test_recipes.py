@@ -284,6 +284,37 @@ class TestRecipe(unittest.TestCase):
             generated_settings[mappings["flake8-path"]], "/new/path/flake8"
         )
 
+    def test_pyfile_defaults_settings(self):
+        """ """
+        from ..recipes import python_file_defaults
+        from ..recipes import Recipe
+
+        recipe_options = self.recipe_options.copy()
+        self.buildout["vscode"] = recipe_options
+
+        recipe = Recipe(self.buildout, "vscode", self.buildout["vscode"])
+        recipe._set_defaults()
+        recipe.install()
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        for key in python_file_defaults:
+            self.assertIn(key, generated_settings)
+
+        with open(os.path.join(self.location, ".vscode", "settings.json"), "w") as fp:
+            json.dump({"files.associations": {}, "files.exclude": []}, fp)
+
+        recipe = Recipe(self.buildout, "vscode", self.buildout["vscode"])
+        recipe._set_defaults()
+        recipe.install()
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        for key in python_file_defaults:
+            self.assertNotEqual(python_file_defaults[key], generated_settings[key])
+
     def tearDown(self):
         os.chdir(self.here)
         rmtree.rmtree(self.location)
@@ -296,14 +327,17 @@ class TestRecipeUninstall(unittest.TestCase):
 
         self.here = os.getcwd()
 
-        self.location = tempfile.mkdtemp(prefix="plone.recipe.vscode")
+        self.location = tempfile.mkdtemp(prefix="collective.recipe.vscode")
+        mkdir(self.location, "develop-eggs")
         os.chdir(self.location)
 
         self.buildout = Buildout()
         # Set eggs
         self.buildout["buildout"]["directory"] = self.location
 
-        self.recipe_options = dict(recipe="plone.recipe.vscode", overwrite="False")
+        self.recipe_options = dict(
+            recipe="collective.recipe.vscode", eggs="zc.recipe.egg\nzc.buildout"
+        )
 
     def test_uninstall(self):
         """ """
@@ -315,6 +349,7 @@ class TestRecipeUninstall(unittest.TestCase):
 
         recipe = Recipe(self.buildout, "vscode", self.buildout["vscode"])
         recipe._set_defaults()
+        recipe.install()
 
         uninstall(recipe.name, recipe.options)
 

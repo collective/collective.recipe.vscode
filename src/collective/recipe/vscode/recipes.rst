@@ -53,7 +53,7 @@ Install  vscode recipe with stndard settings::
     True
 
 VS Code settings with all default options::
-
+    >>> os.unlink(os.path.join(settings_dir, 'settings.json'))
     >>> write(sample_buildout, 'buildout.cfg',
     ... """
     ... [buildout]

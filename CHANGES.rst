@@ -4,7 +4,15 @@ Changelog
 0.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+New features
+
+- default ``files.associations`` and ``files.exclude`` for python file now will be automatically included
+  if those are not in existing ``settings.json``
+
+Bug fixes
+
+- Normally buildout removed generated file/directory first if exists, that's why previously ``settings.json`` file 
+  removed and ultimately existing settings were lost! [nazrulworld]
 
 
 0.1.1 (2019-02-11)
