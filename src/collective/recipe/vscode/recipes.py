@@ -68,7 +68,9 @@ class Recipe:
 
     def __init__(self, buildout, name, options):
         """ """
-        self.buildout, self.name, self.options = buildout, name, options
+        # keep original user provided options
+        self.user_options = options
+        self.buildout, self.name, self.options = buildout, name, self.user_options
         self.logger = logging.getLogger(self.name)
 
         self.egg = zc.recipe.egg.Egg(buildout, self.options["recipe"], options)
@@ -299,7 +301,7 @@ class Recipe:
             ] + develop_eggs_locations
 
         # Look on Jedi
-        if options["jedi-enabled"]:
+        if "jedi-enabled" in self.user_options:
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
 
         if options["jedi-path"]:
@@ -308,29 +310,40 @@ class Recipe:
             )
 
         # Setup flake8
+        self._sanitize_existing_linter_settings(existing_settings, "flake8", options)
         self._prepare_linter_settings(settings, "flake8", options)
 
         # Setup pylint
+        self._sanitize_existing_linter_settings(existing_settings, "pylint", options)
         self._prepare_linter_settings(settings, "pylint", options)
 
         # Setup pep8
+        self._sanitize_existing_linter_settings(existing_settings, "pep8", options)
         self._prepare_linter_settings(settings, "pep8", options)
 
         # Setup isort
+        self._sanitize_existing_linter_settings(
+            existing_settings, "isort", options, allow_key_error=True
+        )
         self._prepare_linter_settings(settings, "isort", options, allow_key_error=True)
 
-        # Setup black
-        if options["black-enabled"]:
+        # Setup mypy
+        self._sanitize_existing_linter_settings(existing_settings, "mypy", options)
+        self._prepare_linter_settings(settings, "mypy", options)
+
+        # Setup black, something more that others
+        if "black-enabled" in self.user_options and options["black-enabled"]:
             settings[mappings["formatting-provider"]] = "black"
-            self._prepare_linter_settings(
-                settings, "black", options, allow_key_error=True
-            )
         else:
             if existing_settings.get(mappings["formatting-provider"], None) == "black":
                 del existing_settings[mappings["formatting-provider"]]
 
-        # Setup mypy
-        self._prepare_linter_settings(settings, "mypy", options)
+        self._sanitize_existing_linter_settings(
+            existing_settings, "black", options, allow_key_error=True
+        )
+        self._prepare_linter_settings(
+                settings, "black", options, allow_key_error=True
+            )
 
         return settings
 
@@ -340,18 +353,21 @@ class Recipe:
         linter_path = "{name}-path".format(name=name)
         linter_args = "{name}-args".format(name=name)
 
-        if not options[linter_enabled]:
-            return
-
-        try:
-            settings[mappings[linter_enabled]] = options[linter_enabled]
-        except KeyError:
-            if not allow_key_error:
-                raise
+        if linter_enabled in self.user_options:
+            # we only care if option from user (buildout part)
+            try:
+                settings[mappings[linter_enabled]] = options[linter_enabled]
+            except KeyError:
+                if not allow_key_error:
+                    raise
 
         # we care only if linter is active
         linter_executable = options.get(linter_path, "")
-        if linter_executable in (None, ""):
+        if (
+            linter_executable in (None, "")
+            and linter_enabled in self.user_options
+            and options[linter_enabled]
+        ):
             linter_executable = find_executable_path(name)
 
         if linter_executable:
@@ -359,7 +375,7 @@ class Recipe:
                 linter_executable
             )
 
-        if options[linter_args]:
+        if linter_args in self.user_options and options[linter_args]:
             settings[mappings[linter_args]] = options[linter_args]
 
     def _write_project_file(self, settings, existing_settings):
@@ -407,6 +423,33 @@ class Recipe:
             )
 
         return path_
+
+    def _sanitize_existing_linter_settings(
+        self, existing_settings, name, options, allow_key_error=False
+    ):
+        """ """
+        linter_enabled = "{name}-enabled".format(name=name)
+        linter_path = "{name}-path".format(name=name)
+        linter_args = "{name}-args".format(name=name)
+
+        if linter_enabled not in self.user_options:
+            try:
+                key = mappings[linter_enabled]
+                if key in existing_settings:
+                    del existing_settings[key]
+            except KeyError:
+                if not allow_key_error:
+                    raise
+
+        if linter_path not in self.user_options:
+            key = mappings[linter_path]
+            if key in existing_settings and not options[linter_enabled]:
+                del existing_settings[key]
+
+        if linter_args not in self.user_options:
+            key = mappings[linter_args]
+            if key in existing_settings:
+                del existing_settings[key]
 
 
 def uninstall(name, options):

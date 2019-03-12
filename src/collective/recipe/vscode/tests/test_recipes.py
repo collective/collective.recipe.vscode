@@ -194,7 +194,7 @@ class TestRecipe(unittest.TestCase):
         self.assertEqual(vsc_settings[mappings["black-path"]], "/tmp/bin/black")
         self.assertEqual(vsc_settings[mappings["black-args"]], ["--line-length", "88"])
 
-        # Let's test path, args are ignored
+        # Let's test path, args are not ignored
         buildout["vscode"]["black-enabled"] = "False"
 
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
@@ -202,10 +202,11 @@ class TestRecipe(unittest.TestCase):
             test_eggs_locations, develop_eggs_locations, {}
         )
         self.assertNotIn(mappings["formatting-provider"], vsc_settings2)
-        self.assertNotIn(mappings["black-path"], vsc_settings2)
-        self.assertNotIn(mappings["black-args"], vsc_settings2)
+        self.assertIn(mappings["black-path"], vsc_settings2)
+        self.assertIn(mappings["black-args"], vsc_settings2)
 
         # test with existing settings
+        buildout["vscode"]["black-path"] = ""
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         vsc_settings3 = recipe._prepare_settings(
             test_eggs_locations, develop_eggs_locations, vsc_settings
