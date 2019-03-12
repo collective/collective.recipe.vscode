@@ -4,7 +4,9 @@ Changelog
 0.1.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Bug fixes
+
+- Issue#2 `Linter disabling simply not working <https://github.com/nazrulworld/collective.recipe.vscode/issues/2>`_
 
 
 0.1.2 (2019-02-14)

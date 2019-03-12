@@ -69,8 +69,9 @@ class Recipe:
     def __init__(self, buildout, name, options):
         """ """
         # keep original user provided options
-        self.user_options = options
-        self.buildout, self.name, self.options = buildout, name, self.user_options
+        # make deep copy of zc.buildout.buildout.Options with dict
+        self.user_options = dict(options)
+        self.buildout, self.name, self.options = buildout, name, options
         self.logger = logging.getLogger(self.name)
 
         self.egg = zc.recipe.egg.Egg(buildout, self.options["recipe"], options)
@@ -308,7 +309,6 @@ class Recipe:
             settings[mappings["jedi-path"]] = self._resolve_executable_path(
                 options["jedi-path"]
             )
-
         # Setup flake8
         self._sanitize_existing_linter_settings(existing_settings, "flake8", options)
         self._prepare_linter_settings(settings, "flake8", options)

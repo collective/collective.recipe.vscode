@@ -316,6 +316,73 @@ class TestRecipe(unittest.TestCase):
         for key in python_file_defaults:
             self.assertNotEqual(python_file_defaults[key], generated_settings[key])
 
+    def test_issue2(self):
+        """Issue:2 Linter disabling simply not working"""
+        from ..recipes import Recipe
+        from ..recipes import mappings
+
+        buildout = self.buildout
+        recipe_options = self.recipe_options.copy()
+        recipe_options.update(
+            {
+                "black-enabled": "1",
+                "black-args": "--line-length 88",
+                "black-path": "$project_path/bin/black",
+                "flake8-enabled": "True",
+                "flake8-args": "--max-line-length 88",
+                "flake8-path": "${buildout:directory}/bin/flake8",
+                "isort-enabled": "True",
+                "pylint-enabled": "False",
+            }
+        )
+        buildout["vscode"] = recipe_options
+        recipe = Recipe(buildout, "vscode", buildout["vscode"])
+        recipe.install()
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        # should have an entry of pylint
+        self.assertIn(mappings["pylint-enabled"], generated_settings)
+        self.assertFalse(generated_settings[mappings["pylint-enabled"]])
+
+        buildout["vscode"]["pylint-enabled"] = "True"
+        recipe = Recipe(buildout, "vscode", buildout["vscode"])
+        recipe.install()
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        # should enable now
+        self.assertTrue(generated_settings[mappings["pylint-enabled"]])
+
+        del recipe_options["black-enabled"]
+        del recipe_options["black-path"]
+        del recipe_options["flake8-enabled"]
+        recipe_options["isort-enabled"] = "False"
+
+        buildout["vscode2"] = recipe_options
+
+        recipe = Recipe(buildout, "vscode2", buildout["vscode2"])
+        recipe.install()
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        # flake8 enable flag should not exists
+
+        self.assertNotIn(mappings["flake8-enabled"], generated_settings)
+        # same for black
+        self.assertNotIn(mappings["formatting-provider"], generated_settings)
+
+        # still flake8 path should exists
+        self.assertIn(mappings["flake8-path"], generated_settings)
+        # But not blackpath
+        self.assertNotIn(mappings["black-path"], generated_settings)
+
+        # there should no auto isort executable
+        self.assertNotIn(mappings["isort-path"], generated_settings)
+
     def tearDown(self):
         os.chdir(self.here)
         rmtree.rmtree(self.location)
