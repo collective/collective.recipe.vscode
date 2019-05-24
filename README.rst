@@ -140,7 +140,7 @@ omelette-location
 
     Default: ${buildout:directory}/parts/omelette - the default omelette location.
 
-autocomplete-use-omelete
+autocomplete-use-omelette
     Required: No
 
     Default: False
@@ -162,12 +162,27 @@ black-path
     iii.) `./bin/black`
     iv.) `~/path/bin/black`
 
-
 black-args
     Required: No
 
     Default: ''
 
+isort-enabled
+    Required: No
+
+    Default: False
+
+    Flag that indicates isort is enabled. 
+
+isort-path
+    Required: No
+
+    Default: try to find isort executable path automatically.
+
+isort-args
+    Required: No
+
+    Default: ''
 
 ignore-develop
     Required: No
