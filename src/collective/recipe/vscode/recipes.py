@@ -184,8 +184,8 @@ class Recipe:
         self._normalize_boolean("pep8-enabled", options)
 
         # autocomplete
-        options["autocomplete-use-omelete"] = self.options[
-            "autocomplete-use-omelete"
+        options["autocomplete-use-omelette"] = self.options[
+            "autocomplete-use-omelette"
         ].lower() in ("yes", "y", "true", "t", "on", "1", "sure")
 
         # Parse linter arguments
@@ -273,7 +273,7 @@ class Recipe:
         self.options.setdefault("black-path", "")
         self.options.setdefault("black-args", "")
         self.options.setdefault("formatting-provider", "")
-        self.options.setdefault("autocomplete-use-omelete", "False")
+        self.options.setdefault("autocomplete-use-omelette", "False")
         self.options.setdefault("ignore-develop", "False")
         self.options.setdefault("ignores", "")
         self.options.setdefault("packages", "")
@@ -291,7 +291,7 @@ class Recipe:
 
         settings[mappings["autocomplete-extrapaths"]] = eggs_locations
 
-        if options["autocomplete-use-omelete"]:
+        if options["autocomplete-use-omelette"]:
             # Add the omelette and the development eggs to the jedi list.
             # This has the advantage of opening files at the omelette location,
             # keeping open files inside the project. Making it possible to
