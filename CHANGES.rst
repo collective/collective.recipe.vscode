@@ -4,7 +4,8 @@ Changelog
 0.1.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Issue#3 `Fixed  typo <https://github.com/nazrulworld/collective.recipe.vscode/issues/3>`_
+- Issue#4 `Documented isort <https://github.com/nazrulworld/collective.recipe.vscode/issues/4>`_
 
 
 0.1.3 (2019-03-12)
