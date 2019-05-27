@@ -183,6 +183,9 @@ class Recipe:
         # pep8 check: Issue#1
         self._normalize_boolean("pep8-enabled", options)
 
+        # generate .env file
+        self._normalize_boolean("generate-envfile", options)
+
         # autocomplete
         options["autocomplete-use-omelette"] = self.options[
             "autocomplete-use-omelette"
@@ -277,6 +280,7 @@ class Recipe:
         self.options.setdefault("ignore-develop", "False")
         self.options.setdefault("ignores", "")
         self.options.setdefault("packages", "")
+        self.options.setdefault("generate-envfile", "False")
 
     def _prepare_settings(
         self, eggs_locations, develop_eggs_locations, existing_settings
@@ -290,6 +294,11 @@ class Recipe:
         )
 
         settings[mappings["autocomplete-extrapaths"]] = eggs_locations
+
+        if options["generate-envfile"]:
+            path = os.path.join(self.settings_dir, ".env")
+            settings["python.envFile"] = path
+            self._write_env_file(eggs_locations, path)
 
         if options["autocomplete-use-omelette"]:
             # Add the omelette and the development eggs to the jedi list.
@@ -402,6 +411,11 @@ class Recipe:
             except ValueError as exc:
                 # catching any json error
                 raise UserError(str(exc))
+
+    def _write_env_file(self, eggs_locations, path):
+        with io.open(path, "w", encoding="utf-8") as fp:
+            paths = os.pathsep.join(eggs_locations)
+            fp.write(ensure_unicode("PYTHONPATH={paths}:${{PYTHONPATH}}").format(paths=paths))
 
     def _resolve_executable_path(self, path_):
         """ """

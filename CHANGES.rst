@@ -6,6 +6,7 @@ Changelog
 
 - Issue#3 `Fixed  typo <https://github.com/nazrulworld/collective.recipe.vscode/issues/3>`_
 - Issue#4 `Documented isort <https://github.com/nazrulworld/collective.recipe.vscode/issues/4>`_
+- Issue#5 `Automatic .env file generation`_
 
 
 0.1.3 (2019-03-12)
