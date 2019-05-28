@@ -415,7 +415,8 @@ class Recipe:
     def _write_env_file(self, eggs_locations, path):
         with io.open(path, "w", encoding="utf-8") as fp:
             paths = os.pathsep.join(eggs_locations)
-            fp.write(ensure_unicode("PYTHONPATH={paths}:${{PYTHONPATH}}").format(paths=paths))
+            path_format = "PYTHONPATH={paths}:${{PYTHONPATH}}"
+            fp.write(ensure_unicode(path_format.format(paths=paths)))
 
     def _resolve_executable_path(self, path_):
         """ """
