@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.4 (unreleased)
+0.1.4 (2019-05-28)
 ------------------
 
 - Issue#3 `Fixed  typo <https://github.com/nazrulworld/collective.recipe.vscode/issues/3>`_ [parruc]
