@@ -53,6 +53,8 @@ class TestRecipe(unittest.TestCase):
                 "flake8-args": "--max-line-length 88",
                 "flake8-path": "${buildout:directory}/bin/flake8",
                 "isort-enabled": "True",
+                "isort-path": "${buildout:directory}/bin/isort",
+                "generate-envfile": "True",
             }
         )
         buildout["vscode"] = recipe_options
@@ -69,20 +71,23 @@ class TestRecipe(unittest.TestCase):
         self.assertEqual(
             generated_settings[mappings["flake8-path"]], self.location + "/bin/flake8"
         )
-
+        print(generated_settings)
         # Isort executable should get automatically
         self.assertEqual(
-            os.path.dirname(generated_settings[mappings["python-path"]]) + "/isort",
             generated_settings[mappings["isort-path"]],
+            self.location + "/bin/isort"
         )
 
+        # Test existence and configuration of env file
+        envfile_path = os.path.join(self.location, ".vscode", ".env")
+        self.assertEqual(generated_settings["python.envFile"], envfile_path)
+        self.assertTrue(os.path.isfile(envfile_path))
+
         # Test with custom location with package
-        buildout["vscode"].update(
-            {
-                "packages": "/fake/path",
-                "project-root": os.path.join(tempfile.gettempdir(), "hshdshgdrts"),
-            }
-        )
+        buildout["vscode"].update({
+            "packages": "/fake/path",
+            "project-root": os.path.join(tempfile.gettempdir(), "hshdshgdrts"),
+        })
 
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         recipe.install()
