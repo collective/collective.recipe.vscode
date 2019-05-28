@@ -205,6 +205,13 @@ packages
 
     Location of some python scripts or non standard modules (don't have setup file), you want to be in system path.
 
+generate-envfile
+    Required: No
+
+    Default: false
+
+    Generate .env file to add eggs to PYTHONPATH
+
 Links
 =====
 
