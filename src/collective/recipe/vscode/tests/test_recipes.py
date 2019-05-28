@@ -71,7 +71,7 @@ class TestRecipe(unittest.TestCase):
         self.assertEqual(
             generated_settings[mappings["flake8-path"]], self.location + "/bin/flake8"
         )
-        print(generated_settings)
+
         # Isort executable should get automatically
         self.assertEqual(
             generated_settings[mappings["isort-path"]],
