@@ -98,24 +98,25 @@ class Recipe:
 
         # Make all other recipes dependent on us so they run first
         for part in self.buildout:
-            self.buildout.get(part) # This will make this part dependent on the other part so this part goes last
+            self.buildout.get(part)
 
-        # recipes = []
-        # for part in [p.strip() for p in self.buildout['buildout'].get('parts','').split()]:
-        #     options = self.buildout.get(part) #HACK
-            
-        #     if options is None:
-        #         continue
-        #     if not 'recipe' in options.keys():
-        #         continue
-        #     recipe = options.get('recipe',None)
-        #     if recipe is None:
-        #         continue
-        #     elif ':' in recipe:
-        #         recipe,subrecipe = recipe.split(':')
-        #     recipes.append((part,recipe,options))
-        import pdb; pdb.set_trace()
+        self.parts = []
+        buildout_parts = self.buildout['buildout'].get('parts', '').split()
+        for part in [p.strip() for p in buildout_parts]:
+            options = self.buildout.get(part)
+            if options is None:
+                continue
+            if 'recipe' not in options.keys():
+                continue
+            recipe = options.get('recipe', None)
+            if recipe is None:
+                continue
+            elif ':' in recipe:
+                recipe, _ = recipe.split(':')
+            self.parts.append((part, recipe, options))
 
+        if self.options.get('eggs'):
+            self.parts = [(self.name, self.options['recipe'], self.options)]
 
     def install(self):
         """Let's build vscode settings file:
@@ -127,27 +128,8 @@ class Recipe:
         develop_eggs_locations = set()
         develop_eggs = os.listdir(self.buildout["buildout"]["develop-eggs-directory"])
         develop_eggs = [dev_egg[:-9] for dev_egg in develop_eggs]
-        import pdb; pdb.set_trace()
 
-        parts = []
-        for part in [p.strip() for p in self.buildout['buildout'].get('parts','').split()]:
-            options = self.buildout.get(part)
-            
-            if options is None:
-                continue
-            if not 'recipe' in options.keys():
-                continue
-            recipe = options.get('recipe',None)
-            if recipe is None:
-                continue
-            elif ':' in recipe:
-                recipe,_ = recipe.split(':')
-            parts.append((part,recipe,options))
-            
-        if self.options.get('eggs'):
-            parts = [self.name, self.options['recipe'], self.options]
-
-        for part, recipe, options in parts:
+        for part, recipe, options in self.parts:
             egg = zc.recipe.egg.Egg(self.buildout, recipe, options)
             try:
                 _, ws = egg.working_set()
