@@ -96,6 +96,27 @@ class Recipe:
             l.strip() for l in self.options["packages"].splitlines() if l and l.strip()
         ]
 
+        # Make all other recipes dependent on us so they run first
+        for part in self.buildout:
+            self.buildout.get(part) # This will make this part dependent on the other part so this part goes last
+
+        # recipes = []
+        # for part in [p.strip() for p in self.buildout['buildout'].get('parts','').split()]:
+        #     options = self.buildout.get(part) #HACK
+            
+        #     if options is None:
+        #         continue
+        #     if not 'recipe' in options.keys():
+        #         continue
+        #     recipe = options.get('recipe',None)
+        #     if recipe is None:
+        #         continue
+        #     elif ':' in recipe:
+        #         recipe,subrecipe = recipe.split(':')
+        #     recipes.append((part,recipe,options))
+        import pdb; pdb.set_trace()
+
+
     def install(self):
         """Let's build vscode settings file:
         This is the method will be called by buildout it-self and this recipe
@@ -106,23 +127,44 @@ class Recipe:
         develop_eggs_locations = set()
         develop_eggs = os.listdir(self.buildout["buildout"]["develop-eggs-directory"])
         develop_eggs = [dev_egg[:-9] for dev_egg in develop_eggs]
+        import pdb; pdb.set_trace()
 
-        try:
-            requirements, ws = self.egg.working_set()
+        parts = []
+        for part in [p.strip() for p in self.buildout['buildout'].get('parts','').split()]:
+            options = self.buildout.get(part)
+            
+            if options is None:
+                continue
+            if not 'recipe' in options.keys():
+                continue
+            recipe = options.get('recipe',None)
+            if recipe is None:
+                continue
+            elif ':' in recipe:
+                recipe,_ = recipe.split(':')
+            parts.append((part,recipe,options))
+            
+        if self.options.get('eggs'):
+            parts = [self.name, self.options['recipe'], self.options]
 
-            for dist in ws.by_key.values():
+        for part, recipe, options in parts:
+            egg = zc.recipe.egg.Egg(self.buildout, recipe, options)
+            try:
+                _, ws = egg.working_set()
 
-                project_name = dist.project_name
-                if project_name not in self.ignored_eggs:
-                    eggs_locations.add(dist.location)
-                if project_name in develop_eggs:
-                    develop_eggs_locations.add(dist.location)
+                for dist in ws.by_key.values():
 
-            for package in self.packages:
-                eggs_locations.add(package)
+                    project_name = dist.project_name
+                    if project_name not in self.ignored_eggs:
+                        eggs_locations.add(dist.location)
+                    if project_name in develop_eggs:
+                        develop_eggs_locations.add(dist.location)
 
-        except Exception as exc:
-            raise UserError(str(exc))
+                for package in self.packages:
+                    eggs_locations.add(package)
+
+            except Exception as exc:
+                raise UserError(str(exc))
 
         try:
             with io.open(

@@ -5,6 +5,7 @@ from zc.buildout.testing import Buildout
 from zc.buildout.testing import mkdir
 from zc.buildout.testing import read
 from zc.buildout.testing import write
+import zc.recipe.egg
 
 import json
 import os
@@ -153,6 +154,35 @@ class TestRecipe(unittest.TestCase):
             )
         except UserError:
             pass
+
+    def test_install_autoeggs(self):
+        """"""
+        from ..recipes import Recipe
+        from ..recipes import mappings
+
+        buildout = self.buildout
+        recipe_options = self.recipe_options.copy()
+        del recipe_options['eggs']
+
+        buildout["test"] = {"recipe":"zc.recipe.egg", "eggs":'zc.buildout', "dependent-scripts":"false"}
+        recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test"])
+        #recipe.install()
+        buildout['buildout']['parts'] = "test"
+        
+        buildout["vscode"] = recipe_options
+        recipe = Recipe(buildout, "vscode", buildout["vscode"])
+
+        recipe.install()
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        # should be two, zc,recipe.egg, python site-package path
+        self.assertEqual(
+            2, len(generated_settings[mappings["autocomplete-extrapaths"]])
+        )
+
+
 
     def test__prepare_settings(self):
         """ """
