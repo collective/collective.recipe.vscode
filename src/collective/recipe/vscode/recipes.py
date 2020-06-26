@@ -24,7 +24,6 @@ python_file_defaults = {
     "files.exclude": {
         "**/*.py[co]": True,
         "**/*.so": True,
-        "**/*.h*": True,
         "**/__pycache__": True,
     },
 }
