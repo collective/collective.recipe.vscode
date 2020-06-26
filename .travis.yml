@@ -1,54 +1,37 @@
-os: linux
-dist: xenial
 language: python
+sudo: false
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
 
-jobs:
-  include:
-    - name: Python 2.7
-      python: 2.7
-      env: python_version=2.7
-
-    - name: Python 3.6
-      python: 3.6
-      env: python_version=3.6
-
-    - name: Python 3.7
-      python: 3.7
-      env: python_version=3.7
-
-    - name: Python 3.8
-      python: 3.8
-      env: python_version=3.8
-
-    - name: Python 3.9
-      python: 3.9-dev
-      env: python_version=3.9-dev
-
+matrix:
   allow_failures:
-    - python: 3.9-dev
-
+    - python: 3.4
+  include:
+      - python: 3.7
+        dist: xenial
+        sudo: true
 cache:
   directories:
     - $HOME/buildout-cache
     - $HOME/parts/node
-
 env:
-  jobs:
-    - CONF_CFG=travis.cfg
+  matrix:
+    - CONF=travis.cfg
 
 install:
   - pip install -U pip isort
   - pip install -r requirements.txt
-  - buildout -c $CONF_CFG annotate
-  - buildout -N -t 3 -c $CONF_CFG
-
+  - buildout -c $CONF annotate
+  - buildout -N -t 3 -c $CONF
 script:
   - bin/code-analysis
   - bin/test
-
 after_success:
   - travis_wait 30 bin/createcoverage run bin/test
-  - travis_wait 30 pip install coverage coveralls
+  - travis_wait 30 pip install coverage==4.4.1 coveralls==1.2.0
   - travis_wait 30 coveralls
 after_failure:
   - bin/flake8 --version
