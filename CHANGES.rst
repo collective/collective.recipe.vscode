@@ -4,7 +4,7 @@ Changelog
 0.1.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Issue#10 `don't ignore html files <https://github.com/nazrulworld/collective.recipe.vscode/issues/10>`_ [MrTango]
 
 
 0.1.4 (2019-05-28)
@@ -34,7 +34,7 @@ New features
 
 Bug fixes
 
-- Normally buildout removed generated file/directory first if exists, that's why previously ``settings.json`` file 
+- Normally buildout removed generated file/directory first if exists, that's why previously ``settings.json`` file
   removed and ultimately existing settings were lost! [nazrulworld]
 
 
