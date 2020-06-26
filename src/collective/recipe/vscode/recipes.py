@@ -92,7 +92,7 @@ class Recipe:
         self.ignored_eggs = develop_eggs + ignores
 
         self.packages = [
-            l.strip() for l in self.options["packages"].splitlines() if l and l.strip()
+            p.strip() for p in self.options["packages"].splitlines() if p and p.strip()
         ]
 
     def install(self):

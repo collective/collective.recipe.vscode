@@ -1,24 +1,38 @@
+os: linux
+dist: xenial
 language: python
-sudo: false
-python:
-  - 2.7
-  - 3.4
-  - 3.5
-  - 3.6
 
-matrix:
+jobs:
+	include:
+		- name: Python 2.7
+			python: 2.7
+			env: python_version=2.7
+
+    - name: Python 3.6
+      python: 3.6
+      env: python_version=3.6
+
+    - name: Python 3.7
+      python: 3.7
+      env: python_version=3.7
+
+    - name: Python 3.8
+      python: 3.8
+      env: python_version=3.8
+
+    - name: Python 3.9
+      python: 3.9-dev
+      env: python_version=3.9-dev
+
   allow_failures:
-    - python: 3.4
-  include:
-      - python: 3.7
-        dist: xenial
-        sudo: true
+    - python: 3.9-dev
+
 cache:
   directories:
     - $HOME/buildout-cache
     - $HOME/parts/node
 env:
-  matrix:
+  jobs:
     - CONF=travis.cfg
 
 install:
@@ -26,9 +40,11 @@ install:
   - pip install -r requirements.txt
   - buildout -c $CONF annotate
   - buildout -N -t 3 -c $CONF
+
 script:
   - bin/code-analysis
-  - bin/test
+	- bin/test
+
 after_success:
   - travis_wait 30 bin/createcoverage run bin/test
   - travis_wait 30 pip install coverage==4.4.1 coveralls==1.2.0
