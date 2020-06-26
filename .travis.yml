@@ -3,10 +3,10 @@ dist: xenial
 language: python
 
 jobs:
-	include:
-		- name: Python 2.7
-			python: 2.7
-			env: python_version=2.7
+  include:
+    - name: Python 2.7
+      python: 2.7
+      env: python_version=2.7
 
     - name: Python 3.6
       python: 3.6
@@ -32,22 +32,21 @@ cache:
     - $HOME/buildout-cache
     - $HOME/parts/node
 env:
-  jobs:
-    - CONF=travis.cfg
+  - CONF_CFG=travis.cfg
 
 install:
   - pip install -U pip isort
   - pip install -r requirements.txt
-  - buildout -c $CONF annotate
-  - buildout -N -t 3 -c $CONF
+  - buildout -c $CONF_CFG annotate
+  - buildout -N -t 3 -c $CONF_CFG
 
 script:
   - bin/code-analysis
-	- bin/test
+  - bin/test
 
 after_success:
   - travis_wait 30 bin/createcoverage run bin/test
-  - travis_wait 30 pip install coverage==4.4.1 coveralls==1.2.0
+  - travis_wait 30 pip install coverage coveralls
   - travis_wait 30 coveralls
 after_failure:
   - bin/flake8 --version
