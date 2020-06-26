@@ -31,8 +31,10 @@ cache:
   directories:
     - $HOME/buildout-cache
     - $HOME/parts/node
+
 env:
-  - CONF_CFG=travis.cfg
+  jobs:
+    - CONF_CFG=travis.cfg
 
 install:
   - pip install -U pip isort
