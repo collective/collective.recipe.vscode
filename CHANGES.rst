@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.5 (unreleased)
+0.1.5 (2020-06-26)
 ------------------
 
 - Issue#10 `don't ignore html files <https://github.com/nazrulworld/collective.recipe.vscode/issues/10>`_ [MrTango]
