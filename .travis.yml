@@ -2,13 +2,14 @@ language: python
 sudo: false
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
+  - 3.8
 
 matrix:
   allow_failures:
     - python: 3.4
+    - python: 2.7
   include:
       - python: 3.7
         dist: xenial
@@ -31,7 +32,7 @@ script:
   - bin/test
 after_success:
   - travis_wait 30 bin/createcoverage run bin/test
-  - travis_wait 30 pip install coverage==4.4.1 coveralls==1.2.0
+  - travis_wait 30 pip install coverage coveralls
   - travis_wait 30 coveralls
 after_failure:
   - bin/flake8 --version
