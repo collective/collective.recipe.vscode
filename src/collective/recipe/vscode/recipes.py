@@ -309,9 +309,13 @@ class Recipe:
                 options["omelette-location"]
             ] + develop_eggs_locations
 
+        # Needed for pylance
+        settings[mappings["analysis-extrapaths"]] = settings[mappings["autocomplete-extrapaths"]]
+
         # Look on Jedi
         if "jedi-enabled" in self.user_options:
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
+            settings[mappings["languageserver"]] = 'Jedi'
 
         if options["jedi-path"]:
             settings[mappings["jedi-path"]] = self._resolve_executable_path(
