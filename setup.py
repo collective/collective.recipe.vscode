@@ -30,7 +30,7 @@ entry_points = {
 
 setup(
     name="collective.recipe.vscode",
-    version="0.1.5.dev0",
+    version="0.1.6.dev0",
     description="Visual Studio Code configuration for buildout-based Python projects",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
@@ -48,6 +48,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Build Tools",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",

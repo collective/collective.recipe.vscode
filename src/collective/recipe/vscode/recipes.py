@@ -24,7 +24,6 @@ python_file_defaults = {
     "files.exclude": {
         "**/*.py[co]": True,
         "**/*.so": True,
-        "**/*.h*": True,
         "**/__pycache__": True,
     },
 }
@@ -93,7 +92,7 @@ class Recipe:
         self.ignored_eggs = develop_eggs + ignores
 
         self.packages = [
-            l.strip() for l in self.options["packages"].splitlines() if l and l.strip()
+            p.strip() for p in self.options["packages"].splitlines() if p and p.strip()
         ]
 
         # Make all other recipes dependent on us so they run first

@@ -11,6 +11,7 @@ eggs/
 .project
 .pydevproject
 .settings/
+.Python
 bin/
 buildout-cache/
 develop-eggs/
@@ -29,4 +30,4 @@ local/
 pip-selfcheck.json
 /*.sublime-workspace
 /.vscode
-
+pyvenv.cfg
