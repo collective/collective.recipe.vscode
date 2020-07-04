@@ -53,19 +53,28 @@ Before using ``collective.recipe.vscode``, if you are going to use linter featur
 
         [vscode]
         recipe = collective.recipe.vscode
-        eggs = ${buildout:eggs}
         flake8-enabled = True
         flake8-path = ${buildout:directory}/bin/flake8
         black-enabled = True
         black-args = ----line-length 88
 
+You can also use the following to include the vscode recipe in all your buildouts automatically
+
+    Modify/Add ``~/.buildout/default.cfg``::
+
+        [buildout]
+        _dummy = ${vscode:recipe}
+
+        [vscode]
+        recipe = collective.recipe.vscode
+
 Available Options
 -----------------
 
 eggs
-    Required: Yes
+    Required: No
 
-    Default: None
+    Default: Will find all recipes with eggs specified and include them.
 
     Your project's list of eggs, those are going to be added as extra path for `autocomplete and intelliSense`_.
 
