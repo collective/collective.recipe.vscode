@@ -103,14 +103,10 @@ class Recipe:
         buildout_parts = self.buildout['buildout'].get('parts', '').split()
         for part in [p.strip() for p in buildout_parts]:
             options = self.buildout.get(part)
-            if options is None:
+            if options is None or not options.get('recipe', None):
                 continue
-            if 'recipe' not in options.keys():
-                continue
-            recipe = options.get('recipe', None)
-            if recipe is None:
-                continue
-            elif ':' in recipe:
+            recipe = options['recipe']
+            if ':' in recipe:
                 recipe, _ = recipe.split(':')
             self.parts.append((part, recipe, options))
 
