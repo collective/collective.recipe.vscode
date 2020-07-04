@@ -59,6 +59,26 @@ Before using ``collective.recipe.vscode``, if you are going to use linter featur
         black-enabled = True
         black-args = ----line-length 88
 
+You can also use the following to include the vscode recipe in all your buildouts automatically
+
+    Modify/Add ``~/.buildout/default.cfg``::
+
+        [buildout]
+        _dummy = ${vscode:recipe}
+        eggs =
+
+        [vscode]
+        recipe = collective.recipe.vscode
+        eggs = ${buildout:eggs} ${test:eggs} ${instance:eggs}
+
+        [test]
+        eggs=
+
+        [instance]
+        eggs=
+
+
+
 Available Options
 -----------------
 
