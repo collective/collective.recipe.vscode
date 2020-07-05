@@ -164,13 +164,13 @@ class TestRecipe(unittest.TestCase):
         recipe_options = self.recipe_options.copy()
         del recipe_options['eggs']
 
-        buildout["test"] = {
+        buildout["test:sub"] = {
             "recipe": "zc.recipe.egg",
             "eggs": 'zc.buildout',
             "dependent-scripts": "false"
             }
-        recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test"])
-        buildout['buildout']['parts'] = "test"
+        recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test:sub"])
+        buildout['buildout']['parts'] = "test:sub"
         buildout["vscode"] = recipe_options
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
 

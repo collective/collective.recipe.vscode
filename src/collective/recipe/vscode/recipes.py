@@ -62,7 +62,7 @@ with io.open(
 
 class Recipe:
 
-    """zc.buildout recipe for sublimetext project settings:
+    """zc.buildout recipe for vscode project settings:
     """
 
     def __init__(self, buildout, name, options):
@@ -72,8 +72,6 @@ class Recipe:
         self.user_options = dict(options)
         self.buildout, self.name, self.options = buildout, name, options
         self.logger = logging.getLogger(self.name)
-
-        self.egg = zc.recipe.egg.Egg(buildout, self.options["recipe"], options)
 
         self._set_defaults()
 
@@ -99,7 +97,12 @@ class Recipe:
         for part in self.buildout:
             self.buildout.get(part)
 
+
         self.parts = []
+        if self.options.get('eggs'):
+            self.parts += [(self.name, self.options['recipe'], self.options)]
+
+        # TODO: doesn't include explicitly references parts
         buildout_parts = self.buildout['buildout'].get('parts', '').split()
         for part in [p.strip() for p in buildout_parts]:
             options = self.buildout.get(part)
@@ -109,9 +112,6 @@ class Recipe:
             if ':' in recipe:
                 recipe, _ = recipe.split(':')
             self.parts.append((part, recipe, options))
-
-        if self.options.get('eggs'):
-            self.parts = [(self.name, self.options['recipe'], self.options)]
 
     def install(self):
         """Let's build vscode settings file:
@@ -124,24 +124,24 @@ class Recipe:
         develop_eggs = os.listdir(self.buildout["buildout"]["develop-eggs-directory"])
         develop_eggs = [dev_egg[:-9] for dev_egg in develop_eggs]
 
-        for part, recipe, options in self.parts:
+        for _, recipe, options in self.parts:
             egg = zc.recipe.egg.Egg(self.buildout, recipe, options)
             try:
                 _, ws = egg.working_set()
-
-                for dist in ws.by_key.values():
-
-                    project_name = dist.project_name
-                    if project_name not in self.ignored_eggs:
-                        eggs_locations.add(dist.location)
-                    if project_name in develop_eggs:
-                        develop_eggs_locations.add(dist.location)
-
-                for package in self.packages:
-                    eggs_locations.add(package)
-
             except Exception as exc:
                 raise UserError(str(exc))
+
+            for dist in ws.by_key.values():
+
+                project_name = dist.project_name
+                if project_name not in self.ignored_eggs:
+                    eggs_locations.add(dist.location)
+                if project_name in develop_eggs:
+                    develop_eggs_locations.add(dist.location)
+
+            for package in self.packages:
+                eggs_locations.add(package)
+
 
         try:
             with io.open(
