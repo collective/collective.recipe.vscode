@@ -97,7 +97,6 @@ class Recipe:
         for part in self.buildout:
             self.buildout.get(part)
 
-
         self.parts = []
         if self.options.get('eggs'):
             self.parts += [(self.name, self.options['recipe'], self.options)]
@@ -141,7 +140,6 @@ class Recipe:
 
             for package in self.packages:
                 eggs_locations.add(package)
-
 
         try:
             with io.open(
