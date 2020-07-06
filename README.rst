@@ -63,7 +63,7 @@ You can also use the following to include the vscode recipe in all your buildout
     Modify/Add ``~/.buildout/default.cfg``::
 
         [buildout]
-        _dummy = ${vscode:recipe}
+        _ = ${vscode:recipe}
 
         [vscode]
         recipe = collective.recipe.vscode

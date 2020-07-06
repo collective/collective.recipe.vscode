@@ -93,24 +93,10 @@ class Recipe:
             p.strip() for p in self.options["packages"].splitlines() if p and p.strip()
         ]
 
-        # Make all other recipes dependent on us so they run first
-        for part in self.buildout:
+        # Make all other recipes dependent on us so they run first to ensure all implctly 
+        # referenced parts are loaded
+        for part in self.buildout['buildout'].get('parts','').split():
             self.buildout.get(part)
-
-        self.parts = []
-        if self.options.get('eggs'):
-            self.parts += [(self.name, self.options['recipe'], self.options)]
-
-        # TODO: doesn't include explicitly references parts
-        buildout_parts = self.buildout['buildout'].get('parts', '').split()
-        for part in [p.strip() for p in buildout_parts]:
-            options = self.buildout.get(part)
-            if options is None or not options.get('recipe', None):
-                continue
-            recipe = options['recipe']
-            if ':' in recipe:
-                recipe, _ = recipe.split(':')
-            self.parts.append((part, recipe, options))
 
     def install(self):
         """Let's build vscode settings file:
@@ -118,12 +104,28 @@ class Recipe:
         will generate or/update vscode setting file (.vscode/settings.json) based
         on provided options.
         """
+
+        if self.options.get('eggs'):
+            parts = [(self.name, self.options['recipe'], self.options)]
+        else:
+            parts = []
+            # get the parts including those not explicity in parts
+            # TODO: is there a way without a private method?
+            installed_part_options, _ = self.buildout._read_installed_part_options()
+            for part, options in installed_part_options.items():
+                if options is None or not options.get('recipe', None):
+                    continue
+                recipe = options['recipe']
+                if ':' in recipe:
+                    recipe, _ = recipe.split(':')
+                parts.append((part, recipe, options))
+
         eggs_locations = set()
         develop_eggs_locations = set()
         develop_eggs = os.listdir(self.buildout["buildout"]["develop-eggs-directory"])
         develop_eggs = [dev_egg[:-9] for dev_egg in develop_eggs]
 
-        for _, recipe, options in self.parts:
+        for part, recipe, options in parts:
             egg = zc.recipe.egg.Egg(self.buildout, recipe, options)
             try:
                 _, ws = egg.working_set()
