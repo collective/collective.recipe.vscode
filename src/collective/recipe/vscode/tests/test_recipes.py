@@ -164,24 +164,25 @@ class TestRecipe(unittest.TestCase):
         recipe_options = self.recipe_options.copy()
         del recipe_options['eggs']
 
-        buildout["test:sub"] = {
+        buildout["test"] = {
             "recipe": "zc.recipe.egg",
             "eggs": 'zc.buildout',
             "dependent-scripts": "false"
             }
-        recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test:sub"])
-        buildout['buildout']['parts'] = "test:sub"
+        buildout['test'].recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test"])
+         
+        buildout['buildout']['parts'] = "test vscode"
         buildout["vscode"] = recipe_options
-        recipe = Recipe(buildout, "vscode", buildout["vscode"])
+        buildout["vscode"].recipe = Recipe(buildout, "vscode", buildout["vscode"])
 
-        recipe.install()
+        self.buildout.install(None)
 
         generated_settings = json.loads(
             read(os.path.join(self.location, ".vscode", "settings.json"))
         )
-        # should be two, zc,recipe.egg, python site-package path
-        self.assertEqual(
-            1, len(generated_settings[mappings["autocomplete-extrapaths"]])
+        # TODO: should be two, zc,recipe.egg, python site-package path
+        self.assertEqual(['site-packages'],
+            [p.split('/')[-1] for p in generated_settings[mappings["autocomplete-extrapaths"]]]
         )
 
     def test__prepare_settings(self):
