@@ -4,7 +4,8 @@ Changelog
 0.1.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Auto find all eggs for all recipes so eggs argument no longer required. [djay]
+- Document how to automatically include the vscode recipe in all your buildouts [djay]
 
 
 0.1.5 (2020-06-26)
