@@ -4,7 +4,11 @@ Changelog
 0.1.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added python.analysis.extraPaths which Microsoft language server/Pylance use to find eggs
+  [djay]
+- If jedi-enabled is off ensure "python.languageServer" is set to 'Microsoft'  and 
+  'vsintellicode.python.completionsEnabled' is turned on
+  [djay]
 
 
 0.1.5 (2020-06-26)

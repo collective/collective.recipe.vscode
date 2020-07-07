@@ -21,6 +21,7 @@
     "black-args": "python.formatting.blackArgs",
     "jedi-enabled": "python.jediEnabled",
     "languageserver": "python.languageServer",
+    "completionsenabled": "vsintellicode.python.completionsEnabled",
     "jedi-path": "python.jediPath",
     "rst-linter-path": "restructuredtext.linter.executablePath",
     "rst-linter-enabled": "restructuredtext.linter.run",

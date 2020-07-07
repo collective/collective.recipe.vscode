@@ -59,25 +59,6 @@ Before using ``collective.recipe.vscode``, if you are going to use linter featur
         black-enabled = True
         black-args = ----line-length 88
 
-You can also use the following to include the vscode recipe in all your buildouts automatically
-
-    Modify/Add ``~/.buildout/default.cfg``::
-
-        [buildout]
-        _dummy = ${vscode:recipe}
-        eggs =
-
-        [vscode]
-        recipe = collective.recipe.vscode
-        eggs = ${buildout:eggs} ${test:eggs} ${instance:eggs}
-
-        [test]
-        eggs=
-
-        [instance]
-        eggs=
-
-
 
 Available Options
 -----------------
@@ -149,6 +130,9 @@ jedi-enabled
     Required: No
 
     Default: False
+
+    If False then ``python.languageServer`` will be ``Microsoft`` and ``vsintellicode.python.completionsEnabled``
+    will be turned on. Ensure you have installed the Pylance vscode extension.
 
 jedi-path
     Required: No
