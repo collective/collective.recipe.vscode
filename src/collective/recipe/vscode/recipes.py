@@ -310,7 +310,8 @@ class Recipe:
             ] + develop_eggs_locations
 
         # Needed for pylance
-        settings[mappings["analysis-extrapaths"]] = settings[mappings["autocomplete-extrapaths"]]
+        settings[mappings["analysis-extrapaths"]] = \
+            settings[mappings["autocomplete-extrapaths"]]
 
         # Look on Jedi
         if "jedi-enabled" in self.user_options and options['jedi-enabled']:
