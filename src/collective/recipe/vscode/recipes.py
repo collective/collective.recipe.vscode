@@ -62,7 +62,7 @@ with io.open(
 
 class Recipe:
 
-    """zc.buildout recipe for sublimetext project settings:
+    """zc.buildout recipe for vscode project settings:
     """
 
     def __init__(self, buildout, name, options):
@@ -72,8 +72,6 @@ class Recipe:
         self.user_options = dict(options)
         self.buildout, self.name, self.options = buildout, name, options
         self.logger = logging.getLogger(self.name)
-
-        self.egg = zc.recipe.egg.Egg(buildout, self.options["recipe"], options)
 
         self._set_defaults()
 
@@ -95,19 +93,44 @@ class Recipe:
             p.strip() for p in self.options["packages"].splitlines() if p and p.strip()
         ]
 
+        # Make all other recipes dependent on us so they run first to ensure all implctly 
+        # referenced parts are loaded
+        for part in self.buildout['buildout'].get('parts','').split():
+            self.buildout.get(part)
+
     def install(self):
         """Let's build vscode settings file:
         This is the method will be called by buildout it-self and this recipe
         will generate or/update vscode setting file (.vscode/settings.json) based
         on provided options.
         """
+
+        if self.options.get('eggs'):
+            parts = [(self.name, self.options['recipe'], self.options)]
+        else:
+            parts = []
+            # get the parts including those not explicity in parts
+            # TODO: is there a way without a private method?
+            installed_part_options, _ = self.buildout._read_installed_part_options()
+            for part, options in installed_part_options.items():
+                if options is None or not options.get('recipe', None):
+                    continue
+                recipe = options['recipe']
+                if ':' in recipe:
+                    recipe, _ = recipe.split(':')
+                parts.append((part, recipe, options))
+
         eggs_locations = set()
         develop_eggs_locations = set()
         develop_eggs = os.listdir(self.buildout["buildout"]["develop-eggs-directory"])
         develop_eggs = [dev_egg[:-9] for dev_egg in develop_eggs]
 
-        try:
-            requirements, ws = self.egg.working_set()
+        for part, recipe, options in parts:
+            egg = zc.recipe.egg.Egg(self.buildout, recipe, options)
+            try:
+                _, ws = egg.working_set()
+            except Exception as exc:
+                raise UserError(str(exc))
 
             for dist in ws.by_key.values():
 
@@ -119,9 +142,6 @@ class Recipe:
 
             for package in self.packages:
                 eggs_locations.add(package)
-
-        except Exception as exc:
-            raise UserError(str(exc))
 
         try:
             with io.open(

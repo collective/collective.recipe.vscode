@@ -10,6 +10,7 @@ import json
 import os
 import tempfile
 import unittest
+import zc.recipe.egg
 
 
 JSON_TEMPLATE = os.path.join(
@@ -153,6 +154,36 @@ class TestRecipe(unittest.TestCase):
             )
         except UserError:
             pass
+
+    def test_install_autoeggs(self):
+        """"""
+        from ..recipes import Recipe
+        from ..recipes import mappings
+
+        buildout = self.buildout
+        recipe_options = self.recipe_options.copy()
+        del recipe_options['eggs']
+
+        buildout["test"] = {
+            "recipe": "zc.recipe.egg",
+            "eggs": 'zc.buildout',
+            "dependent-scripts": "false"
+            }
+        buildout['test'].recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test"])
+         
+        buildout['buildout']['parts'] = "test vscode"
+        buildout["vscode"] = recipe_options
+        buildout["vscode"].recipe = Recipe(buildout, "vscode", buildout["vscode"])
+
+        self.buildout.install(None)
+
+        generated_settings = json.loads(
+            read(os.path.join(self.location, ".vscode", "settings.json"))
+        )
+        # TODO: should be two, zc,recipe.egg, python site-package path
+        self.assertEqual(['site-packages'],
+            [p.split('/')[-1] for p in generated_settings[mappings["autocomplete-extrapaths"]]]
+        )
 
     def test__prepare_settings(self):
         """ """
