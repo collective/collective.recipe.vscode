@@ -139,6 +139,9 @@ jedi-enabled
 
     Default: False
 
+    If False then ``python.languageServer`` will be ``Microsoft`` and ``vsintellicode.python.completionsEnabled``
+    will be turned on. Ensure you have installed the Pylance vscode extension.
+
 jedi-path
     Required: No
 

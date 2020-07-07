@@ -1,6 +1,7 @@
 {
     "python-path": "python.pythonPath",
     "autocomplete-extrapaths": "python.autoComplete.extraPaths",
+    "analysis-extrapaths": "python.analysis.extraPaths",
     "flake8-args": "python.linting.flake8Args",
     "flake8-enabled": "python.linting.flake8Enabled",
     "flake8-path": "python.linting.flake8Path",
@@ -19,6 +20,8 @@
     "black-path": "python.formatting.blackPath",
     "black-args": "python.formatting.blackArgs",
     "jedi-enabled": "python.jediEnabled",
+    "languageserver": "python.languageServer",
+    "completionsenabled": "vsintellicode.python.completionsEnabled",
     "jedi-path": "python.jediPath",
     "rst-linter-path": "restructuredtext.linter.executablePath",
     "rst-linter-enabled": "restructuredtext.linter.run",

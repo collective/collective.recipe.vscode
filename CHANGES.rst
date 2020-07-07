@@ -6,7 +6,9 @@ Changelog
 
 - Auto find all eggs for all recipes so eggs argument no longer required. [djay]
 - Document how to automatically include the vscode recipe in all your buildouts [djay]
-
+- Added python.analysis.extraPaths which Microsoft language server/Pylance use to find eggs [djay]
+- If jedi-enabled is off ensure "python.languageServer" is set to 'Microsoft'  and 
+  'vsintellicode.python.completionsEnabled' is turned on [djay]
 
 0.1.5 (2020-06-26)
 ------------------

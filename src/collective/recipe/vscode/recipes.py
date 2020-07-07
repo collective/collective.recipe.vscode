@@ -329,9 +329,21 @@ class Recipe:
                 options["omelette-location"]
             ] + develop_eggs_locations
 
+        # Needed for pylance
+        settings[mappings["analysis-extrapaths"]] = \
+            settings[mappings["autocomplete-extrapaths"]]
+
         # Look on Jedi
-        if "jedi-enabled" in self.user_options:
+        if "jedi-enabled" in self.user_options and options['jedi-enabled']:
+            # TODO: not even sure jediEnabled setting is supported anymore
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
+            settings[mappings["languageserver"]] = 'Jedi'
+            settings[mappings["completionsenabled"]] = False
+        else:
+            settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
+            # TODO: or probably better to remove these settings?
+            settings[mappings["languageserver"]] = 'Microsoft'
+            settings[mappings["completionsenabled"]] = True
 
         if options["jedi-path"]:
             settings[mappings["jedi-path"]] = self._resolve_executable_path(
