@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.6 (unreleased)
+0.1.6 (2020-07-15)
 ------------------
 
 - Auto find all eggs for all recipes so eggs argument no longer required. [djay]
