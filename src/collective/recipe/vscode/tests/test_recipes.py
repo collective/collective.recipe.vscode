@@ -75,8 +75,7 @@ class TestRecipe(unittest.TestCase):
 
         # Isort executable should get automatically
         self.assertEqual(
-            generated_settings[mappings["isort-path"]],
-            self.location + "/bin/isort"
+            generated_settings[mappings["isort-path"]], self.location + "/bin/isort"
         )
 
         # Test existence and configuration of env file
@@ -85,10 +84,12 @@ class TestRecipe(unittest.TestCase):
         self.assertTrue(os.path.isfile(envfile_path))
 
         # Test with custom location with package
-        buildout["vscode"].update({
-            "packages": "/fake/path",
-            "project-root": os.path.join(tempfile.gettempdir(), "hshdshgdrts"),
-        })
+        buildout["vscode"].update(
+            {
+                "packages": "/fake/path",
+                "project-root": os.path.join(tempfile.gettempdir(), "hshdshgdrts"),
+            }
+        )
 
         recipe = Recipe(buildout, "vscode", buildout["vscode"])
         recipe.install()
@@ -162,16 +163,16 @@ class TestRecipe(unittest.TestCase):
 
         buildout = self.buildout
         recipe_options = self.recipe_options.copy()
-        del recipe_options['eggs']
+        del recipe_options["eggs"]
 
         buildout["test"] = {
             "recipe": "zc.recipe.egg",
-            "eggs": 'zc.buildout',
-            "dependent-scripts": "false"
-            }
-        buildout['test'].recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test"])
-         
-        buildout['buildout']['parts'] = "test vscode"
+            "eggs": "zc.buildout",
+            "dependent-scripts": "false",
+        }
+        buildout["test"].recipe = zc.recipe.egg.Egg(buildout, "test", buildout["test"])
+
+        buildout["buildout"]["parts"] = "test vscode"
         buildout["vscode"] = recipe_options
         buildout["vscode"].recipe = Recipe(buildout, "vscode", buildout["vscode"])
 
@@ -181,8 +182,12 @@ class TestRecipe(unittest.TestCase):
             read(os.path.join(self.location, ".vscode", "settings.json"))
         )
         # TODO: should be two, zc,recipe.egg, python site-package path
-        self.assertEqual(['site-packages'],
-            [p.split('/')[-1] for p in generated_settings[mappings["autocomplete-extrapaths"]]]
+        self.assertEqual(
+            ["site-packages"],
+            [
+                p.split("/")[-1]
+                for p in generated_settings[mappings["autocomplete-extrapaths"]]
+            ],
         )
 
     def test__prepare_settings(self):

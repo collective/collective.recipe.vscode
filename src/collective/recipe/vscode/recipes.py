@@ -21,11 +21,7 @@ json_load_params = {}
 
 python_file_defaults = {
     "files.associations": {"*.zcml": "xml"},
-    "files.exclude": {
-        "**/*.py[co]": True,
-        "**/*.so": True,
-        "**/__pycache__": True,
-    },
+    "files.exclude": {"**/*.py[co]": True, "**/*.so": True, "**/__pycache__": True},
 }
 
 
@@ -93,9 +89,10 @@ class Recipe:
             p.strip() for p in self.options["packages"].splitlines() if p and p.strip()
         ]
 
-        # Make all other recipes dependent on us so they run first to ensure all implctly 
+        # Make all other recipes dependent on us so they run first to
+        # ensure all implctly
         # referenced parts are loaded
-        for part in self.buildout['buildout'].get('parts','').split():
+        for part in self.buildout["buildout"].get("parts", "").split():
             self.buildout.get(part)
 
     def install(self):
@@ -105,19 +102,19 @@ class Recipe:
         on provided options.
         """
 
-        if self.options.get('eggs'):
-            parts = [(self.name, self.options['recipe'], self.options)]
+        if self.options.get("eggs"):
+            parts = [(self.name, self.options["recipe"], self.options)]
         else:
             parts = []
             # get the parts including those not explicity in parts
             # TODO: is there a way without a private method?
             installed_part_options, _ = self.buildout._read_installed_part_options()
             for part, options in installed_part_options.items():
-                if options is None or not options.get('recipe', None):
+                if options is None or not options.get("recipe", None):
                     continue
-                recipe = options['recipe']
-                if ':' in recipe:
-                    recipe, _ = recipe.split(':')
+                recipe = options["recipe"]
+                if ":" in recipe:
+                    recipe, _ = recipe.split(":")
                 parts.append((part, recipe, options))
 
         eggs_locations = set()
@@ -330,19 +327,20 @@ class Recipe:
             ] + develop_eggs_locations
 
         # Needed for pylance
-        settings[mappings["analysis-extrapaths"]] = \
-            settings[mappings["autocomplete-extrapaths"]]
+        settings[mappings["analysis-extrapaths"]] = settings[
+            mappings["autocomplete-extrapaths"]
+        ]
 
         # Look on Jedi
-        if "jedi-enabled" in self.user_options and options['jedi-enabled']:
+        if "jedi-enabled" in self.user_options and options["jedi-enabled"]:
             # TODO: not even sure jediEnabled setting is supported anymore
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
-            settings[mappings["languageserver"]] = 'Jedi'
+            settings[mappings["languageserver"]] = "Jedi"
             settings[mappings["completionsenabled"]] = False
         else:
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
             # TODO: or probably better to remove these settings?
-            settings[mappings["languageserver"]] = 'Microsoft'
+            settings[mappings["languageserver"]] = "Microsoft"
             settings[mappings["completionsenabled"]] = True
 
         if options["jedi-path"]:
@@ -381,9 +379,7 @@ class Recipe:
         self._sanitize_existing_linter_settings(
             existing_settings, "black", options, allow_key_error=True
         )
-        self._prepare_linter_settings(
-                settings, "black", options, allow_key_error=True
-            )
+        self._prepare_linter_settings(settings, "black", options, allow_key_error=True)
 
         return settings
 
