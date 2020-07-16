@@ -63,10 +63,11 @@ You can also use the following to include the vscode recipe in all your buildout
     Modify/Add ``~/.buildout/default.cfg``::
 
         [buildout]
-        _ = ${vscode:recipe}
+        _to_always_include_vscode = ${vscode:recipe}
 
         [vscode]
         recipe = collective.recipe.vscode
+        _to_remove_buildout_warning = ${buildout:_to_always_include_vscode}
 
 Available Options
 -----------------
