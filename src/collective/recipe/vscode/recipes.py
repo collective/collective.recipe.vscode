@@ -103,7 +103,8 @@ class Recipe:
         """
 
         if self.options.get("eggs"):
-            parts = [(self.name, self.options["recipe"], self.options)]
+            # Need working set for all eggs and zc.recipe.egg also
+            parts = [(self.name, self.options["recipe"], self.options), ('dummy', 'zc.recipe.egg', {})]
         else:
             parts = []
             # get the parts including those not explicity in parts
@@ -315,6 +316,12 @@ class Recipe:
             path = os.path.join(self.settings_dir, ".env")
             settings["python.envFile"] = path
             self._write_env_file(eggs_locations, path)
+
+            # Also need terminal.integrated.env.* to make debugging work
+            pythonpath= os.pathsep.join(eggs_locations + ["${PYTHONPATH}"])
+            settings["terminal.integrated.env.linux"] = dict(PYTHONPATH=pythonpath)
+            settings["terminal.integrated.env.osx"] = dict(PYTHONPATH=pythonpath)
+            settings["terminal.integrated.env.windows"] = dict(PYTHONPATH=pythonpath)
 
         if options["autocomplete-use-omelette"]:
             # Add the omelette and the development eggs to the jedi list.
