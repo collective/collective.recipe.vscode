@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.7 (unreleased)
+0.1.7 (2021-06-23)
 ------------------
 
 - fix vscode debugger by including terminal.integrated.env.* settings and zc.recipe.egg in paths.
