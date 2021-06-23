@@ -104,7 +104,10 @@ class Recipe:
 
         if self.options.get("eggs"):
             # Need working set for all eggs and zc.recipe.egg also
-            parts = [(self.name, self.options["recipe"], self.options), ('dummy', 'zc.recipe.egg', {})]
+            parts = [
+                (self.name, self.options["recipe"], self.options),
+                ("dummy", "zc.recipe.egg", {}),
+            ]
         else:
             parts = []
             # get the parts including those not explicity in parts
@@ -127,7 +130,7 @@ class Recipe:
             egg = zc.recipe.egg.Egg(self.buildout, recipe, options)
             try:
                 _, ws = egg.working_set()
-            except Exception as exc:
+            except Exception as exc:  # noqa: B902
                 raise UserError(str(exc))
 
             for dist in ws.by_key.values():
@@ -318,7 +321,7 @@ class Recipe:
             self._write_env_file(eggs_locations, path)
 
             # Also need terminal.integrated.env.* to make debugging work
-            pythonpath= os.pathsep.join(eggs_locations + ["${PYTHONPATH}"])
+            pythonpath = os.pathsep.join(eggs_locations + ["${PYTHONPATH}"])
             settings["terminal.integrated.env.linux"] = dict(PYTHONPATH=pythonpath)
             settings["terminal.integrated.env.osx"] = dict(PYTHONPATH=pythonpath)
             settings["terminal.integrated.env.windows"] = dict(PYTHONPATH=pythonpath)
