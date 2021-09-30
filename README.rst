@@ -140,7 +140,7 @@ jedi-enabled
 
     Default: False
 
-    If False then ``python.languageServer`` will be ``Microsoft`` and ``vsintellicode.python.completionsEnabled``
+    If False then ``python.languageServer`` will be ``Pylance`` and ``vsintellicode.python.completionsEnabled``
     will be turned on. Ensure you have installed the Pylance vscode extension.
 
 jedi-path
@@ -221,7 +221,7 @@ packages
 generate-envfile
     Required: No
 
-    Default: false
+    Default: True
 
     Generate .env file to add eggs to PYTHONPATH
 

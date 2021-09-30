@@ -300,7 +300,7 @@ class Recipe:
         self.options.setdefault("ignore-develop", "False")
         self.options.setdefault("ignores", "")
         self.options.setdefault("packages", "")
-        self.options.setdefault("generate-envfile", "False")
+        self.options.setdefault("generate-envfile", "True")
 
     def _prepare_settings(
         self, eggs_locations, develop_eggs_locations, existing_settings
@@ -350,7 +350,7 @@ class Recipe:
         else:
             settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
             # TODO: or probably better to remove these settings?
-            settings[mappings["languageserver"]] = "Microsoft"
+            settings[mappings["languageserver"]] = "Pylance"
             settings[mappings["completionsenabled"]] = True
 
         if options["jedi-path"]:
