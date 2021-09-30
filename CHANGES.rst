@@ -4,7 +4,8 @@ Changelog
 0.1.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Change languageserver to Pylance (Microsoft no longer works)
+- Default to generating .env file to aid in debugging
 
 
 0.1.7 (2021-06-23)
