@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.8 (unreleased)
+0.1.8 (2021-10-28)
 ------------------
 
 - Change languageserver to Pylance (Microsoft no longer works)
