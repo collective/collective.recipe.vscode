@@ -142,10 +142,6 @@ jedi-enabled
 
     If False then ``python.languageServer`` will be ``Pylance``. Ensure you have installed the Pylance vscode extension.
 
-jedi-path
-    Required: No
-
-    Default: ""
 
 omelette-location
     Required: No
