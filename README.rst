@@ -32,7 +32,7 @@ Introduction
 ``collective.recipe.vscode`` is the buildout recipe for `Visual Studio Code`_ lover who wants python `autocomplete and intelliSense`_ features while developing python `Buildout`_ based project,
 normally buildout eggs are not available in python path even if you provide virtualenv python path.
 This tool will help not only adding eggs path as ``python extraPath`` but also you can manage per project basis vscode settings
-for linter, autoformatting. 
+for linter, autoformatting.
 
 A general question may arise that why we will use this tool, whether we can create `Visual Studio Code`_ project settings easily (we have better knowledge over `Visual Studio Code`_ configuration)?
 Well i completely agree with you, but if you want to get benefited from  `Visual Studio Code`_ autocompletion feature (basically I am lover of autocompletion), you have to add all eggs links and it is hard to manage eggs links manually
@@ -44,7 +44,7 @@ Installation
 ============
 
 Install ``collective.recipe.vscode`` is simple enough, just need to create a section for ``vscode`` to your buildout.
-Before using ``collective.recipe.vscode``, if you are going to use linter feature, make those are added in eggs section or globally installed. 
+Before using ``collective.recipe.vscode``, if you are going to use linter feature, make those are added in eggs section or globally installed.
 
     Example Buildout::
 
@@ -92,7 +92,7 @@ flake8-enabled
 
     Default: False
 
-    Flag that indicates flake8 based linting. 
+    Flag that indicates flake8 based linting.
 
 flake8-path
     Required: No
@@ -103,7 +103,7 @@ flake8-args
     Required: No
 
     Default: ""
-    
+
 
 pylint-enabled
 
@@ -140,8 +140,7 @@ jedi-enabled
 
     Default: False
 
-    If False then ``python.languageServer`` will be ``Pylance`` and ``vsintellicode.python.completionsEnabled``
-    will be turned on. Ensure you have installed the Pylance vscode extension.
+    If False then ``python.languageServer`` will be ``Pylance``. Ensure you have installed the Pylance vscode extension.
 
 jedi-path
     Required: No
@@ -185,7 +184,7 @@ isort-enabled
 
     Default: False
 
-    Flag that indicates isort is enabled. 
+    Flag that indicates isort is enabled.
 
 isort-path
     Required: No

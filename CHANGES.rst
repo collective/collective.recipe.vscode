@@ -6,6 +6,8 @@ Changelog
 
 - Change languageserver to Pylance (Microsoft no longer works)
 - Default to generating .env file to aid in debugging
+- Options are removed. ``jedi-path``
+- ``vsintellicode.python.completionsEnabled`` is no longer part of VS code settings.
 
 
 0.1.7 (2021-06-23)
@@ -20,7 +22,7 @@ Changelog
 - Auto find all eggs for all recipes so eggs argument no longer required. [djay]
 - Document how to automatically include the vscode recipe in all your buildouts [djay]
 - Added python.analysis.extraPaths which Microsoft language server/Pylance use to find eggs [djay]
-- If jedi-enabled is off ensure "python.languageServer" is set to 'Microsoft'  and 
+- If jedi-enabled is off ensure "python.languageServer" is set to 'Microsoft'  and
   'vsintellicode.python.completionsEnabled' is turned on [djay]
 
 0.1.5 (2020-06-26)

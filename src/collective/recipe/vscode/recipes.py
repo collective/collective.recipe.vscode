@@ -291,7 +291,6 @@ class Recipe:
         self.options.setdefault("pep8-path", "")
         self.options.setdefault("pep8-args", "")
         self.options.setdefault("jedi-enabled", "False")
-        self.options.setdefault("jedi-path", "")
         self.options.setdefault("black-enabled", "False")
         self.options.setdefault("black-path", "")
         self.options.setdefault("black-args", "")
@@ -344,19 +343,15 @@ class Recipe:
         # Look on Jedi
         if "jedi-enabled" in self.user_options and options["jedi-enabled"]:
             # TODO: not even sure jediEnabled setting is supported anymore
-            settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
+            # settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
             settings[mappings["languageserver"]] = "Jedi"
-            settings[mappings["completionsenabled"]] = False
+            # VS code no longer supports this settings
+            # settings[mappings["completionsenabled"]] = False
         else:
-            settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
+            # settings[mappings["jedi-enabled"]] = options["jedi-enabled"]
             # TODO: or probably better to remove these settings?
             settings[mappings["languageserver"]] = "Pylance"
-            settings[mappings["completionsenabled"]] = True
 
-        if options["jedi-path"]:
-            settings[mappings["jedi-path"]] = self._resolve_executable_path(
-                options["jedi-path"]
-            )
         # Setup flake8
         self._sanitize_existing_linter_settings(existing_settings, "flake8", options)
         self._prepare_linter_settings(settings, "flake8", options)
