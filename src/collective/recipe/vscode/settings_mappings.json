@@ -21,6 +21,7 @@
     "black-args": "python.formatting.blackArgs",
     "jedi-enabled": "python.jediEnabled",
     "languageserver": "python.languageServer",
+    "robot-python-env": "robot.python.env",
     "rst-linter-path": "restructuredtext.linter.executablePath",
     "rst-linter-enabled": "restructuredtext.linter.run",
     "rst-linter-args": "restructuredtext.linter.extraArgs"
