@@ -32,9 +32,9 @@ ROBOT_LSP_LAUNCH_TEMPLATE = lambda pythonpath: {
     "target": "^\"\\${file}\"",
     "terminal": "integrated",
     "env": {
-        "PYTHONPATH": pythonpath,
         "LISTENER_HOST": "localhost",
-        "LISTENER_PORT": 49999
+        "LISTENER_PORT": 49999,
+        "PYTHONPATH": pythonpath,
     },
     "args": [
         "--variable",
@@ -42,19 +42,19 @@ ROBOT_LSP_LAUNCH_TEMPLATE = lambda pythonpath: {
         "--variable",
         "ZOPE_port:55001",
         "--listener",
-        "plone.app.robotframework.server.RobotListener"
+        "plone.app.robotframework.server.RobotListener",
     ]
 }
 
 ROBOT_SERVER_TASK_TEMPLATE = {
-    "label": "Start Plone Robot Server",
+    "label": "Start Plone Test Server",
     "type": "shell",
     "command": "ZSERVER_PORT=55001 bin/robot-server ${input:ploneTestingLayer} --no-reload -vv",
     "presentation": {
       "reveal": "always",
-      "panel": "shared"
+      "panel": "shared",
     },
-    "problemMatcher": []
+    "problemMatcher": [],
 }
 
 ROBOT_SERVER_INPUT_TEMPLATE = {
