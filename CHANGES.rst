@@ -4,7 +4,8 @@ Changelog
 0.1.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add option `robot-enabled` (default *false*) to enable support for Robot Framework Language Server
+  [datakurre]
 
 
 0.1.8 (2021-10-28)

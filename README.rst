@@ -220,6 +220,16 @@ generate-envfile
 
     Generate .env file to add eggs to PYTHONPATH
 
+robot-enabled
+    Required: No
+
+    Default: False
+
+    Generate setting `robot.python.env` with buildout eggs for Robot Framework Language Server.
+    Generate task **Start Plone Test Server** into `tasks.json`.
+    Generate task **Robot Framework: Launch Template** into `launch.json` for Robot Framework Language Server.
+
+
 Links
 =====
 

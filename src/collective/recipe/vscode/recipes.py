@@ -24,6 +24,46 @@ python_file_defaults = {
     "files.exclude": {"**/*.py[co]": True, "**/*.so": True, "**/__pycache__": True},
 }
 
+ROBOT_LSP_LAUNCH_TEMPLATE = lambda pythonpath: {
+    "type": "robotframework-lsp",
+    "name": "Robot Framework: Launch Template",
+    "request": "launch",
+    "cwd": "^\"\\${workspaceFolder}\"",
+    "target": "^\"\\${file}\"",
+    "terminal": "integrated",
+    "env": {
+        "LISTENER_HOST": "localhost",
+        "LISTENER_PORT": 49999,
+        "PYTHONPATH": pythonpath,
+    },
+    "args": [
+        "--variable",
+        "ZOPE_HOST:localhost",
+        "--variable",
+        "ZOPE_port:55001",
+        "--listener",
+        "plone.app.robotframework.server.RobotListener",
+    ]
+}
+
+ROBOT_SERVER_TASK_TEMPLATE = {
+    "label": "Start Plone Test Server",
+    "type": "shell",
+    "command": "ZSERVER_PORT=55001 bin/robot-server ${input:ploneTestingLayer} --no-reload -vv",
+    "presentation": {
+      "reveal": "always",
+      "panel": "shared",
+    },
+    "problemMatcher": [],
+}
+
+ROBOT_SERVER_INPUT_TEMPLATE = {
+    "id": "ploneTestingLayer",
+    "type": "promptString",
+    "description": "Enter Plone Testing Fixture",
+    "default": "Products.CMFPlone.testing.PRODUCTS_CMFPLONE_ROBOT_TESTING"
+}
+
 
 def ensure_unicode(string):
     """" """
@@ -172,6 +212,53 @@ class Recipe:
             json_text = json.dumps(vscode_settings, indent=2, sort_keys=True)
             fp.write(ensure_unicode(json_text))
 
+        # Update .vscode/launch.js and .vscode/tasks.js for Robot testing
+        if vscode_settings.get("robot.python.env"):
+            vs_launch_file = os.path.join(self.settings_dir, "launch.json")
+            if os.path.exists(vs_launch_file):
+                with io.open(vs_launch_file, "r", encoding="utf-8") as fp:
+                    launch_json = json.loads(fp.read())
+            else:
+                launch_json = dict(version="0.2.0")
+            launch_json.setdefault("configurations", [])
+            launch_json["configurations"] = [
+                c for c in launch_json["configurations"]
+                if c["type"] != "robotframwork-lsp" and
+                c["name"] != "Robot Framework: Launch Template"
+            ] + [
+                ROBOT_LSP_LAUNCH_TEMPLATE(
+                    vscode_settings["robot.python.env"]["PYTHONPATH"].replace(
+                        '${PYTHONPATH}', '${env:PYTHONPATH}'
+                    )
+                )
+            ]
+            with io.open(vs_launch_file, "w", encoding="utf-8") as fp:
+                fp.write(json.dumps(launch_json, indent=4))
+
+            vs_tasks_file = os.path.join(self.settings_dir, "tasks.json")
+            if os.path.exists(vs_tasks_file):
+                with io.open(vs_tasks_file, "r", encoding="utf-8") as fp:
+                    tasks_json = json.loads(fp.read())
+            else:
+                tasks_json = dict(version="2.0.0")
+            tasks_json.setdefault("tasks", [])
+            tasks_json.setdefault("inputs", [])
+            tasks_json["tasks"] = [
+                t for t in tasks_json["tasks"]
+                if t["type"] != "shell" and
+                t["name"] != "Plone: Start Test Server"
+            ] + [
+                ROBOT_SERVER_TASK_TEMPLATE
+            ]
+            tasks_json["inputs"] = [
+                i for i in tasks_json["inputs"]
+                if i["id"] != "ploneTestingLayer"
+            ] + [
+                ROBOT_SERVER_INPUT_TEMPLATE
+            ]
+            with io.open(vs_tasks_file, "w", encoding="utf-8") as fp:
+                fp.write(json.dumps(tasks_json, indent=4))
+
         return vs_generated_file
 
     update = install
@@ -205,6 +292,9 @@ class Recipe:
 
         # generate .env file
         self._normalize_boolean("generate-envfile", options)
+
+        # robotframework lsp pythonpath
+        self._normalize_boolean("robot-enabled", options)
 
         # autocomplete
         options["autocomplete-use-omelette"] = self.options[
@@ -300,6 +390,7 @@ class Recipe:
         self.options.setdefault("ignores", "")
         self.options.setdefault("packages", "")
         self.options.setdefault("generate-envfile", "True")
+        self.options.setdefault("robot-enabled", "False")
 
     def _prepare_settings(
         self, eggs_locations, develop_eggs_locations, existing_settings
@@ -339,6 +430,10 @@ class Recipe:
         settings[mappings["analysis-extrapaths"]] = settings[
             mappings["autocomplete-extrapaths"]
         ]
+
+        # Needed for robotframework-slp
+        if "robot-enabled" in self.user_options and options["robot-enabled"]:
+            settings[mappings["robot-python-env"]] = dict(PYTHONPATH=pythonpath)
 
         # Look on Jedi
         if "jedi-enabled" in self.user_options and options["jedi-enabled"]:
