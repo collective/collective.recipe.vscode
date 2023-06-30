@@ -24,7 +24,7 @@ python_file_defaults = {
     "files.exclude": {"**/*.py[co]": True, "**/*.so": True, "**/__pycache__": True},
 }
 
-ROBOT_LSP_LAUNCH_TEMPLATE = lambda pythonpath: {
+ROBOT_LSP_LAUNCH_TEMPLATE = lambda pythonpath: {  # noqa: E731
     "type": "robotframework-lsp",
     "name": "Robot Framework: Launch Template",
     "request": "launch",
@@ -49,7 +49,7 @@ ROBOT_LSP_LAUNCH_TEMPLATE = lambda pythonpath: {
 ROBOT_SERVER_TASK_TEMPLATE = {
     "label": "Start Plone Test Server",
     "type": "shell",
-    "command": "ZSERVER_PORT=55001 bin/robot-server ${input:ploneTestingLayer} --no-reload -vv",
+    "command": "ZSERVER_PORT=55001 bin/robot-server ${input:ploneTestingLayer} --no-reload -vv",  # noqa: E501
     "presentation": {
       "reveal": "always",
       "panel": "shared",
@@ -135,7 +135,7 @@ class Recipe:
         for part in self.buildout["buildout"].get("parts", "").split():
             self.buildout.get(part)
 
-    def install(self):
+    def install(self):  # noqa: C901
         """Let's build vscode settings file:
         This is the method will be called by buildout it-self and this recipe
         will generate or/update vscode setting file (.vscode/settings.json) based

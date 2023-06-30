@@ -32,3 +32,4 @@ pip-selfcheck.json
 /.vscode
 pyvenv.cfg
 /venv
+.python-version

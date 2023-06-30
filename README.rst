@@ -2,8 +2,8 @@
     :target: https://pypi.org/project/collective.recipe.vscode/
     :alt: Package Status
 
-.. image:: https://travis-ci.org/nazrulworld/collective.recipe.vscode.svg?branch=master
-    :target: https://travis-ci.org/nazrulworld/collective.recipe.vscode
+.. image:: https://app.travis-ci.com/nazrulworld/collective.recipe.vscode.svg?branch=master
+    :target: https://app.travis-ci.com/nazrulworld/collective.recipe.vscode
     :alt: Travis Build Status
 
 .. image:: https://coveralls.io/repos/github/nazrulworld/collective.recipe.vscode/badge.svg?branch=master
