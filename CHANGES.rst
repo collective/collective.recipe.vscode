@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.9 (unreleased)
+0.1.9 (2023-06-30)
 ------------------
 
 - Add option `robot-enabled` (default *false*) to enable support for Robot Framework Language Server
